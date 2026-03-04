@@ -1,17 +1,26 @@
-# meta_insights/graph_client.py
+# src/clients/graph_client.py
 
-import time
 import random
-from typing import Dict, Iterable, Optional, List, Any
+import time
+from typing import Any, Dict, Iterable, List, Optional
+
 import requests
 
 
 class GraphAPIError(RuntimeError):
     """Custom exception for Graph API errors."""
-    pass
 
 
 class GraphAPIClient:
+    """
+    Robust client for interacting with the Meta Graph API.
+    
+    Features:
+    - Automatic access token injection
+    - Exponential backoff and retry for rate limits (429) and server errors (5xx)
+    - Handling of 'Retry-After' headers
+    - Automatic pagination support (paging.next and cursors)
+    """
     def __init__(
         self,
         access_token: str,
@@ -19,6 +28,15 @@ class GraphAPIClient:
         base_url: str = "https://graph.facebook.com",
         timeout: float = 30.0,
     ):
+        """
+        Initialize the Graph API client.
+
+        Args:
+            access_token: Long-lived User or System User access token.
+            version: API version string (e.g. 'v21.0').
+            base_url: Base graph URL.
+            timeout: Request timeout in seconds.
+        """
         self.access_token = access_token
         self.version = version
         self.base_url = base_url.rstrip("/")
@@ -43,7 +61,7 @@ class GraphAPIClient:
         base_backoff: float = 1.0,
     ) -> Dict[str, Any]:
         """
-        GET URL → JSON with:
+        GET URL -> JSON with:
           - automatic access_token injection (if not present)
           - retry on 429 + 5xx
           - respect Retry-After when present
@@ -60,7 +78,7 @@ class GraphAPIClient:
             except requests.RequestException as e:
                 # Network issue (DNS, connection reset, etc.)
                 if attempt < max_retries - 1:
-                    sleep_for = base_backoff * (2 ** attempt)
+                    sleep_for = base_backoff * (2**attempt)
                     time.sleep(sleep_for)
                     continue
                 raise GraphAPIError(f"Network error calling {url}: {e}") from e
@@ -78,13 +96,13 @@ class GraphAPIClient:
                     try:
                         sleep_for = float(retry_after)
                     except ValueError:
-                        sleep_for = base_backoff * (2 ** attempt)
+                        sleep_for = base_backoff * (2**attempt)
                 else:
                     # Exponential backoff + jitter
-                    sleep_for = base_backoff * (2 ** attempt) + random.uniform(0, 0.5)
+                    sleep_for = base_backoff * (2**attempt) + random.uniform(0, 0.5)
 
                 time.sleep(sleep_for)
-                # On 429, keep same params; On 5xx, same too.
+                # On 429/5xx, retry with same params
                 continue
 
             # For 4xx (other than 429) or exhausted retries: raise detailed error
@@ -93,9 +111,7 @@ class GraphAPIClient:
             except ValueError:
                 payload = {"raw_text": resp.text}
 
-            raise GraphAPIError(
-                f"HTTP {status} calling {url}: {payload}"
-            )
+            raise GraphAPIError(f"HTTP {status} calling {url}: {payload}")
 
         # If we somehow exit loop without returning or raising above
         raise GraphAPIError(f"Unreachable state calling {url}")
@@ -116,7 +132,7 @@ class GraphAPIClient:
         Stream all rows across pages from a Graph endpoint.
 
         - use_next_url=True:
-            follow 'paging.next' (fully formed URL) → safest
+            follow 'paging.next' (fully formed URL) -> safest
         - use_next_url=False:
             use 'cursors.after' with the same base URL
 
@@ -210,3 +226,13 @@ class GraphAPIClient:
                 max_rows=max_rows,
             )
         )
+
+    # --------------------------------------------------
+    # Simple GET helper (single page)
+    # --------------------------------------------------
+    def get(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Perform a single GET request to a Graph endpoint.
+        """
+        url = self._build_url(endpoint)
+        return self._request_json(url, params=params)

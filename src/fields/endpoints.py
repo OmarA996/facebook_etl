@@ -4,6 +4,7 @@ ENDPOINT_FIELDS = {
     # ============ INSIGHTS ============ #
     "insights": {
         "ad": [
+            "date_start","date_stop",
             "account_id","account_name",
             "campaign_id","campaign_name",
             "adset_id","adset_name",

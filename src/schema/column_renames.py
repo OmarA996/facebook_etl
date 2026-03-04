@@ -128,4 +128,19 @@ META_RENAME_MAP = {
     "video_p50_watched_actions_video_view": "video_50_watch",
     "video_p75_watched_actions_video_view": "video_75_watch",
     "video_p95_watched_actions_video_view": "video_95_watch",
+
+    # ===== Account Info =====
+    "account_status": "account_status",
+    "currency": "currency",
+    "timezone_id": "timezone_id",
+    "amount_spent": "amount_spent",
+    "spend_cap": "spend_cap",
+    "balance": "balance",
+    "business_name": "business_name",
+    "disable_reason": "disable_reason",
+    "funding_source_details.display_string": "funding_source_display",
+    "funding_source_details.id": "funding_source_id",
+    "funding_source_details.type": "funding_source_type",
+    "created_time": "created_time",
+    "name": "account_name",
 }

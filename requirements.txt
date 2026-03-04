@@ -2,3 +2,6 @@ python-dotenv
 requests
 pandas
 SQLAlchemy
+pydantic-settings
+structlog
+pytest
