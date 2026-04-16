@@ -27,12 +27,23 @@ class Settings(BaseSettings):
     )
 
     META_ACCESS_TOKEN: str = ""
-    META_API_VERSION: str = "v21.0"
+    META_API_VERSION: str = "v25.0"
     # We use a string field for the raw list to keep parsing simple
     META_AD_ACCOUNT_IDS: str = "" 
     
     DB_CONN_STRING: str = ""
     DB_CONN_STRING_DEFAULT: str = ""
+
+    BQ_PROJECT_ID: str = ""
+    BQ_DATASET: str = ""
+    BQ_LOCATION: str = ""
+    BQ_CREDENTIALS_PATH: str = ""
+    BQ_IMPERSONATE_SERVICE_ACCOUNT: str = ""
+    ACCOUNT_REGISTRY_PATH: str = Field(default_factory=lambda: os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        "data",
+        "account_registry.csv",
+    ))
     
     # Compute default DATA_DIR relative to project root
     DATA_DIR: str = Field(default_factory=lambda: os.path.join(
@@ -66,6 +77,56 @@ class Settings(BaseSettings):
         for key, value in os.environ.items():
             if key.startswith("DB_CONN_STRING_") and key not in ("DB_CONN_STRING", "DB_CONN_STRING_DEFAULT"):
                 profile = key.replace("DB_CONN_STRING_", "").lower()
+                if value:
+                    profiles[profile] = value
+        return profiles
+
+    @property
+    def bq_project_profiles(self) -> Dict[str, str]:
+        profiles = {}
+        for key, value in os.environ.items():
+            if key.startswith("BQ_PROJECT_ID_") and key != "BQ_PROJECT_ID":
+                profile = key.replace("BQ_PROJECT_ID_", "").lower()
+                if value:
+                    profiles[profile] = value
+        return profiles
+
+    @property
+    def bq_dataset_profiles(self) -> Dict[str, str]:
+        profiles = {}
+        for key, value in os.environ.items():
+            if key.startswith("BQ_DATASET_") and key != "BQ_DATASET":
+                profile = key.replace("BQ_DATASET_", "").lower()
+                if value:
+                    profiles[profile] = value
+        return profiles
+
+    @property
+    def bq_location_profiles(self) -> Dict[str, str]:
+        profiles = {}
+        for key, value in os.environ.items():
+            if key.startswith("BQ_LOCATION_") and key != "BQ_LOCATION":
+                profile = key.replace("BQ_LOCATION_", "").lower()
+                if value:
+                    profiles[profile] = value
+        return profiles
+
+    @property
+    def bq_credentials_profiles(self) -> Dict[str, str]:
+        profiles = {}
+        for key, value in os.environ.items():
+            if key.startswith("BQ_CREDENTIALS_PATH_") and key != "BQ_CREDENTIALS_PATH":
+                profile = key.replace("BQ_CREDENTIALS_PATH_", "").lower()
+                if value:
+                    profiles[profile] = value
+        return profiles
+
+    @property
+    def bq_impersonate_service_account_profiles(self) -> Dict[str, str]:
+        profiles = {}
+        for key, value in os.environ.items():
+            if key.startswith("BQ_IMPERSONATE_SERVICE_ACCOUNT_") and key != "BQ_IMPERSONATE_SERVICE_ACCOUNT":
+                profile = key.replace("BQ_IMPERSONATE_SERVICE_ACCOUNT_", "").lower()
                 if value:
                     profiles[profile] = value
         return profiles
