@@ -4,7 +4,7 @@ import pandas as pd
 
 from src.clients.graph_client import GraphAPIError
 from src.etl.extract.creatives import fetch_creatives, fetch_preview_url
-from src.etl.transform.core import flatten_json, fill_numeric_keep_nulls, ensure_id_and_name
+from src.etl.transform.core import apply_rename_map, flatten_json, fill_numeric_keep_nulls, ensure_id_and_name
 from src.etl.load.csv_loader import save_df_to_csv
 from src.etl.load.postgres_loader import save_df_to_postgres_upsert, insert_raw_records
 from src.schema.unique_keys import UNIQUE_KEYS
@@ -14,7 +14,7 @@ from src.config import PostgresConfig, load_ad_account_ids
 def run_creatives_info(
     csv_path: Optional[str] = None,
     to_db: bool = True,
-    include_preview: bool = True,
+    include_preview: bool = False,
     db_config: Optional[PostgresConfig] = None,
     ad_account_ids: Optional[list[str]] = None,
     max_workers: int = 1,
@@ -45,7 +45,8 @@ def run_creatives_info(
 
     df = flatten_json(records)
     df = ensure_id_and_name(df, id_col="creative_id", name_col="creative_name")
-    
+    df = apply_rename_map(df, "creatives-info", table_name="dim_meta_creatives")
+
     # Deduplicate by creative_id to ensure unique reporting
     if "creative_id" in df.columns:
         before_count = len(df)

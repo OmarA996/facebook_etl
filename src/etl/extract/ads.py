@@ -28,7 +28,7 @@ AD_FIELDS = [
     "issues_info",
     "tracking_specs",
     # delivery_info is not available on Ad in Graph API v22; omit to avoid (#100) errors
-    "creative{id,name,object_type,object_story_id,object_story_spec,asset_feed_spec,template_url,template_url_spec,degrees_of_freedom_spec,dynamic_ad_voice,product_set_id,url_tags,link_url,instagram_permalink_url,image_hash,image_url,thumbnail_url,video_id,body,title,call_to_action_type}",
+    "creative{id,name}",
 ]
 
 
@@ -48,7 +48,7 @@ def fetch_ads(
     """
     account_ids = ad_account_ids or load_ad_account_ids()
     if not account_ids:
-        raise ValueError("META_AD_ACCOUNT_IDS is empty; provide at least one account id.")
+        raise ValueError("No included account ids were found. Add accounts to the registry and set include_in_etl=True.")
 
     all_rows: List[Dict[str, Any]] = []
 

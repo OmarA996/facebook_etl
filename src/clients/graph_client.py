@@ -68,8 +68,10 @@ class GraphAPIClient:
         """
         params = dict(params or {})
 
-        # Ensure token is present and not duplicated
-        if "access_token" not in params:
+        # Inject token only if absent from both params dict and the URL itself.
+        # paging.next URLs already contain access_token; adding it again via params
+        # causes it to accumulate on every page, eventually exceeding Meta's URL limit.
+        if "access_token" not in params and "access_token" not in url:
             params["access_token"] = self.access_token
 
         for attempt in range(max_retries):
