@@ -1,4 +1,4 @@
-from src.config import load_ad_account_ids, load_postgres_config
+from src.config import load_ad_account_ids, load_postgres_config, load_graph_config, load_bigquery_config
 from src.etl.pipelines.adsets_info import run_adsets_info
 from src.etl.pipelines.ads_info import run_ads_info
 from src.etl.pipelines.accounts_info import run_accounts_info
@@ -215,3 +215,71 @@ def handle_sync_to_bigquery(args):
     except Exception as exc:
         logger.exception("Failed PostgreSQL to BigQuery sync", error=str(exc))
         raise
+
+
+def handle_health_check(args):
+    """
+    Test each configured connection and report pass/fail.
+    Exits with code 1 if any check fails.
+    """
+    import sys
+    from src.clients.graph_client import GraphAPIClient, GraphAPIError
+    from sqlalchemy import create_engine, text
+
+    results = {}
+
+    # ── 1. Meta API ──────────────────────────────────────────────────────────
+    try:
+        graph_cfg = load_graph_config()
+        client = GraphAPIClient(
+            access_token=graph_cfg.access_token,
+            version=graph_cfg.version,
+            base_url=graph_cfg.base_url,
+        )
+        client.get("me", params={"fields": "id"})
+        results["Meta API"] = ("OK", f"token valid (version {graph_cfg.version})")
+    except Exception as exc:
+        results["Meta API"] = ("FAIL", str(exc))
+
+    # ── 2. PostgreSQL ─────────────────────────────────────────────────────────
+    try:
+        db_cfg = load_postgres_config(getattr(args, "db_profile", None))
+        engine = create_engine(db_cfg.conn_string)
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        results["PostgreSQL"] = ("OK", db_cfg.conn_string.split("@")[-1])  # host/db only, no password
+    except Exception as exc:
+        results["PostgreSQL"] = ("FAIL", str(exc))
+
+    # ── 3. BigQuery (only if configured) ─────────────────────────────────────
+    try:
+        bq_cfg = load_bigquery_config(getattr(args, "db_profile", None))
+        from google.cloud import bigquery as bq
+        import google.auth
+
+        if bq_cfg.credentials_path:
+            from google.oauth2 import service_account
+            creds = service_account.Credentials.from_service_account_file(bq_cfg.credentials_path)
+        else:
+            creds, _ = google.auth.default()
+
+        bq_client = bq.Client(project=bq_cfg.project_id, credentials=creds)
+        list(bq_client.list_datasets(max_results=1))
+        results["BigQuery"] = ("OK", f"{bq_cfg.project_id}.{bq_cfg.dataset_id}")
+    except ValueError:
+        results["BigQuery"] = ("SKIP", "BQ_PROJECT_ID / BQ_DATASET not configured")
+    except Exception as exc:
+        results["BigQuery"] = ("FAIL", str(exc))
+
+    # ── Report ────────────────────────────────────────────────────────────────
+    print("\n-- Health Check ---------------------------------------------")
+    any_fail = False
+    for name, (status, detail) in results.items():
+        icon = "OK  " if status == "OK" else ("SKIP" if status == "SKIP" else "FAIL")
+        print(f"  [{icon}]  {name:<12}  {detail}")
+        if status == "FAIL":
+            any_fail = True
+    print("-------------------------------------------------------------\n")
+
+    if any_fail:
+        sys.exit(1)

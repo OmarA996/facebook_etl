@@ -14,6 +14,7 @@ from src.cli.handlers import (
     handle_insights_range,
     handle_prune_columns,
     handle_sync_to_bigquery,
+    handle_health_check,
 )
 
 logger = get_logger(__name__)
@@ -164,6 +165,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional BigQuery target table override for single-table syncs",
     )
 
+    # health-check
+    subparsers.add_parser(
+        "health-check",
+        help="Test all connections (Meta API, Postgres, BigQuery) and report status",
+    )
+
     return parser
 
 
@@ -196,6 +203,8 @@ def main():
             handle_prune_columns(args)
         elif cmd == "sync-to-bigquery":
             handle_sync_to_bigquery(args)
+        elif cmd == "health-check":
+            handle_health_check(args)
         else:
             parser.print_help()
     except Exception:
