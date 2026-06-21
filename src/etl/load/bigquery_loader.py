@@ -803,7 +803,7 @@ def ensure_bigquery_views(
     extra = sorted(all_fact_cols - STATIC_FACT_COLUMNS)
 
     existing_dim_cols: dict[str, set[str]] = {}
-    for tbl in ("dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives"):
+    for tbl in ("dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives", "dim_meta_campaigns"):
         tbl_id = f"{project_id}.{dataset_id}.{tbl}"
         try:
             existing_dim_cols[tbl] = {field.name for field in client.get_table(tbl_id).schema}

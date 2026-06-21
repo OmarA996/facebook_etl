@@ -2,9 +2,6 @@ from __future__ import annotations
 
 VIEW_NAME = "vw_meta_ads_full"
 
-# Dim columns to include in the view, grouped by table alias.
-# Each entry is (column_name, alias_or_None).
-# At view-creation time only columns that actually exist in the table are included.
 _DIM_ACCOUNTS_COLS: list[tuple[str, str | None]] = [
     ("currency", None), ("timezone_id", None), ("account_status", None),
     ("business_name", None), ("disable_reason", None),
@@ -23,14 +20,19 @@ _DIM_CREATIVES_COLS: list[tuple[str, str | None]] = [
     ("video_id", None), ("link_url", None), ("object_url", None),
     ("display_url", None), ("effective_object_story_id", None), ("status", "creative_status"),
 ]
+_DIM_CAMPAIGNS_COLS: list[tuple[str, str | None]] = [
+    ("status", "campaign_status"),
+    ("effective_status", "campaign_effective_status"),
+    ("bid_strategy", None),
+    ("buying_type", None),
+    ("daily_budget", None),
+    ("lifetime_budget", None),
+    ("budget_remaining", None),
+    ("start_time", "campaign_start_time"),
+    ("stop_time", "campaign_stop_time"),
+]
 
 
-# Fallback chains for image / thumbnail. The Meta API only returns top-level
-# image_url / thumbnail_url for static-image creatives; carousel, video, and
-# asset-feed creatives expose their image under a nested object_story_spec.*
-# column. We coalesce across all approved nested columns so the view exposes
-# a single image_url / thumbnail_url that is non-null whenever any source has
-# a value. Listed in priority order.
 _IMAGE_URL_FALLBACK_COLS: list[str] = [
     "image_url",
     "asset_feed_spec_image_url",
@@ -52,7 +54,6 @@ _IMAGE_HASH_FALLBACK_COLS: list[str] = [
 
 
 def _coalesce_fragment(alias: str, cols: list[str], output_name: str, existing: set[str] | None) -> str:
-    """Build a COALESCE(...) AS <output_name> fragment using only columns that exist."""
     available = [c for c in cols if existing is None or c in existing]
     if not available:
         return ""
@@ -61,10 +62,6 @@ def _coalesce_fragment(alias: str, cols: list[str], output_name: str, existing: 
     inner = ", ".join(f"{alias}.{c}" for c in available)
     return f"        COALESCE({inner}) AS {output_name}"
 
-# Columns from fact_meta_delivery_ad already hardcoded in the static SELECT below.
-# Any column found in the table that is NOT in this set is a dynamically-inferred
-# column (e.g. actions_*, action_values_*, video_*_video_view) and will be appended
-# automatically at view-creation time.
 STATIC_FACT_COLUMNS: frozenset[str] = frozenset({
     "date_start", "date_stop",
     "spend", "social_spend", "reach", "impressions", "clicks",
@@ -82,12 +79,9 @@ STATIC_FACT_COLUMNS: frozenset[str] = frozenset({
     "video_p75_watched_actions", "video_p95_watched_actions",
     "video_p100_watched_actions", "video_30_sec_watched_actions",
     "video_avg_time_watched_actions",
-    # dim_meta_ads columns (aliased in view)
     "ad_created_time", "ad_updated_time",
 })
 
-# NOTE: _STATIC_SELECT intentionally includes the SELECT keyword so that
-# postgres_view_sql / bigquery_view_sql can append it directly after AS / nothing.
 _STATIC_SELECT = """
     SELECT
         f.date_start,
@@ -130,27 +124,12 @@ _STATIC_SELECT = """
         f.video_30_sec_watched_actions,
         f.video_avg_time_watched_actions"""
 
-_JOINS_PG = """
-    FROM fact_meta_delivery_ad f
-    LEFT JOIN dim_meta_accounts  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')
-    LEFT JOIN dim_meta_ads        ad ON f.ad_id        = ad.ad_id
-    LEFT JOIN dim_meta_creatives  cr ON ad.creative_id = cr.creative_id
-"""
-
-_JOINS_BQ_TEMPLATE = """
-    FROM `{project_id}.{dataset_id}.fact_meta_delivery_ad` f
-    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_accounts`  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')
-    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_ads`        ad ON f.ad_id        = ad.ad_id
-    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_creatives`  cr ON ad.creative_id = cr.creative_id
-"""
-
 
 def _dim_fragment(
     alias: str,
     cols: list[tuple[str, str | None]],
     existing: set[str] | None,
 ) -> str:
-    """Return comma-separated SELECT lines for one dim table, skipping missing columns."""
     lines = []
     for col, col_alias in cols:
         if existing is not None and col not in existing:
@@ -173,32 +152,41 @@ def postgres_view_sql(
     extra_fact_columns: list[str] | None = None,
     existing_dim_cols: dict[str, set[str]] | None = None,
 ) -> str:
-    """Build the full CREATE OR REPLACE VIEW statement for Postgres.
-
-    existing_dim_cols: optional {table_name: set_of_col_names} used to skip
-    columns that were pruned from dim tables.
-    """
     edc = existing_dim_cols or {}
     cr_existing = edc.get("dim_meta_creatives")
+    cmp_existing = edc.get("dim_meta_campaigns")
+
     acc_frag = _dim_fragment("acc", _DIM_ACCOUNTS_COLS, edc.get("dim_meta_accounts"))
     ads_frag = _dim_fragment("ad",  _DIM_ADS_COLS,      edc.get("dim_meta_ads"))
     cr_frag  = _dim_fragment("cr",  _DIM_CREATIVES_COLS, cr_existing)
+    cmp_frag = _dim_fragment("cmp", _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
     image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS, "image_url", cr_existing)
     thumb_frag = _coalesce_fragment("cr", _THUMBNAIL_URL_FALLBACK_COLS, "thumbnail_url", cr_existing)
     hash_frag  = _coalesce_fragment("cr", _IMAGE_HASH_FALLBACK_COLS,  "image_hash",   cr_existing)
     dynamic  = _dynamic_select_fragment(extra_fact_columns or [])
+
+    cmp_join = "\n    LEFT JOIN dim_meta_campaigns  cmp ON f.campaign_id = cmp.campaign_id" if cmp_existing is not None else ""
+
+    joins = (
+        "\n    FROM fact_meta_delivery_ad f"
+        "\n    LEFT JOIN dim_meta_accounts  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')"
+        "\n    LEFT JOIN dim_meta_ads        ad ON f.ad_id        = ad.ad_id"
+        "\n    LEFT JOIN dim_meta_creatives  cr ON ad.creative_id = cr.creative_id"
+        + cmp_join
+    )
 
     select = (
         f"{_STATIC_SELECT}"
         + (f",\n{acc_frag}" if acc_frag else "")
         + (f",\n{ads_frag}" if ads_frag else "")
         + (f",\n{cr_frag}"  if cr_frag  else "")
+        + (f",\n{cmp_frag}" if cmp_frag else "")
         + (f",\n{image_frag}" if image_frag else "")
         + (f",\n{thumb_frag}" if thumb_frag else "")
         + (f",\n{hash_frag}"  if hash_frag  else "")
         + dynamic
     )
-    return f"CREATE VIEW {VIEW_NAME} AS{select}\n{_JOINS_PG}"
+    return f"CREATE VIEW {VIEW_NAME} AS{select}\n{joins}"
 
 
 def bigquery_view_sql(
@@ -207,23 +195,35 @@ def bigquery_view_sql(
     extra_fact_columns: list[str] | None = None,
     existing_dim_cols: dict[str, set[str]] | None = None,
 ) -> str:
-    """Build the view query body (no CREATE VIEW) for BigQuery."""
     edc = existing_dim_cols or {}
     cr_existing = edc.get("dim_meta_creatives")
+    cmp_existing = edc.get("dim_meta_campaigns")
+
     acc_frag = _dim_fragment("acc", _DIM_ACCOUNTS_COLS, edc.get("dim_meta_accounts"))
     ads_frag = _dim_fragment("ad",  _DIM_ADS_COLS,      edc.get("dim_meta_ads"))
     cr_frag  = _dim_fragment("cr",  _DIM_CREATIVES_COLS, cr_existing)
+    cmp_frag = _dim_fragment("cmp", _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
     image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS, "image_url", cr_existing)
     thumb_frag = _coalesce_fragment("cr", _THUMBNAIL_URL_FALLBACK_COLS, "thumbnail_url", cr_existing)
     hash_frag  = _coalesce_fragment("cr", _IMAGE_HASH_FALLBACK_COLS,  "image_hash",   cr_existing)
     dynamic  = _dynamic_select_fragment(extra_fact_columns or [])
 
-    joins = _JOINS_BQ_TEMPLATE.format(project_id=project_id, dataset_id=dataset_id)
+    cmp_join = f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_campaigns` cmp ON f.campaign_id = cmp.campaign_id" if cmp_existing is not None else ""
+
+    joins = (
+        f"\n    FROM `{project_id}.{dataset_id}.fact_meta_delivery_ad` f"
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_accounts`  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')"
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_ads`        ad ON f.ad_id        = ad.ad_id"
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_creatives`  cr ON ad.creative_id = cr.creative_id"
+        + cmp_join
+    )
+
     select = (
         f"{_STATIC_SELECT}"
         + (f",\n{acc_frag}" if acc_frag else "")
         + (f",\n{ads_frag}" if ads_frag else "")
         + (f",\n{cr_frag}"  if cr_frag  else "")
+        + (f",\n{cmp_frag}" if cmp_frag else "")
         + (f",\n{image_frag}" if image_frag else "")
         + (f",\n{thumb_frag}" if thumb_frag else "")
         + (f",\n{hash_frag}"  if hash_frag  else "")

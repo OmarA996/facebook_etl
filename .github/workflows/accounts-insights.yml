@@ -55,4 +55,4 @@ jobs:
           BQ_LOCATION: ${{ secrets.BQ_LOCATION }}
           BQ_CREDENTIALS_PATH: credentials/bigquery-service-account.json
           ALERT_ENVIRONMENT: github-actions
-        run: python main.py accounts-insights --days-back 7 --to-bigquery
+        run: python main.py accounts-insights --days-back 2 --to-bigquery

@@ -172,11 +172,8 @@ def run_accounts_insights(
             "sync-to-bigquery fact_meta_delivery_ad", run_sync_to_bigquery,
             table_names=["fact_meta_delivery_ad"], db_config=db_config, profile=profile,
         ))
-        from src.etl.pipelines.materialize_combined import run_materialize_combined
-        results.append(_step(
-            "materialize-combined", run_materialize_combined,
-            db_config=db_config, to_bigquery=True, profile=profile,
-        ))
+        # vw_meta_ads_full (BQ native view) is refreshed automatically by ensure_bigquery_views
+        # inside run_sync_to_bigquery above — no separate materialize step needed here.
 
     _log_summary(results)
 
