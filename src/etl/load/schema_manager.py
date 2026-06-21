@@ -273,7 +273,7 @@ def ensure_views(engine: Engine) -> None:
 
         existing_dim_cols = {
             tbl: {col["name"] for col in insp.get_columns(tbl)}
-            for tbl in ("dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives", "dim_meta_campaigns")
+            for tbl in ("dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives", "dim_meta_campaigns", "dim_meta_adsets")
             if insp.has_table(tbl)
         }
 

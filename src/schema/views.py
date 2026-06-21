@@ -23,13 +23,26 @@ _DIM_CREATIVES_COLS: list[tuple[str, str | None]] = [
 _DIM_CAMPAIGNS_COLS: list[tuple[str, str | None]] = [
     ("status", "campaign_status"),
     ("effective_status", "campaign_effective_status"),
-    ("bid_strategy", None),
+    ("bid_strategy", "campaign_bid_strategy"),
     ("buying_type", None),
-    ("daily_budget", None),
-    ("lifetime_budget", None),
-    ("budget_remaining", None),
+    ("daily_budget", "campaign_daily_budget"),
+    ("lifetime_budget", "campaign_lifetime_budget"),
+    ("budget_remaining", "campaign_budget_remaining"),
     ("start_time", "campaign_start_time"),
     ("stop_time", "campaign_stop_time"),
+]
+_DIM_ADSETS_COLS: list[tuple[str, str | None]] = [
+    ("status", "adset_status"),
+    ("effective_status", "adset_effective_status"),
+    ("billing_event", None),
+    ("daily_budget", "adset_daily_budget"),
+    ("lifetime_budget", "adset_lifetime_budget"),
+    ("bid_amount", None),
+    ("bid_strategy", "adset_bid_strategy"),
+    ("destination_type", None),
+    ("optimization_goal", "adset_optimization_goal"),
+    ("start_time", "adset_start_time"),
+    ("end_time", "adset_end_time"),
 ]
 
 
@@ -61,6 +74,7 @@ def _coalesce_fragment(alias: str, cols: list[str], output_name: str, existing: 
         return f"        {alias}.{available[0]} AS {output_name}"
     inner = ", ".join(f"{alias}.{c}" for c in available)
     return f"        COALESCE({inner}) AS {output_name}"
+
 
 STATIC_FACT_COLUMNS: frozenset[str] = frozenset({
     "date_start", "date_stop",
@@ -148,39 +162,53 @@ def _dynamic_select_fragment(extra_fact_columns: list[str]) -> str:
     return ",\n" + lines
 
 
+def _optional_join_pg(table: str, alias: str, on: str, existing_dim_cols: dict) -> str:
+    if existing_dim_cols.get(table) is not None:
+        return f"\n    LEFT JOIN {table} {alias} ON {on}"
+    return ""
+
+
+def _optional_join_bq(project_id: str, dataset_id: str, table: str, alias: str, on: str, existing_dim_cols: dict) -> str:
+    if existing_dim_cols.get(table) is not None:
+        return f"\n    LEFT JOIN `{project_id}.{dataset_id}.{table}` {alias} ON {on}"
+    return ""
+
+
 def postgres_view_sql(
     extra_fact_columns: list[str] | None = None,
     existing_dim_cols: dict[str, set[str]] | None = None,
 ) -> str:
     edc = existing_dim_cols or {}
-    cr_existing = edc.get("dim_meta_creatives")
+    cr_existing  = edc.get("dim_meta_creatives")
     cmp_existing = edc.get("dim_meta_campaigns")
+    ast_existing = edc.get("dim_meta_adsets")
 
-    acc_frag = _dim_fragment("acc", _DIM_ACCOUNTS_COLS, edc.get("dim_meta_accounts"))
-    ads_frag = _dim_fragment("ad",  _DIM_ADS_COLS,      edc.get("dim_meta_ads"))
-    cr_frag  = _dim_fragment("cr",  _DIM_CREATIVES_COLS, cr_existing)
-    cmp_frag = _dim_fragment("cmp", _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
-    image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS, "image_url", cr_existing)
+    acc_frag = _dim_fragment("acc",  _DIM_ACCOUNTS_COLS,  edc.get("dim_meta_accounts"))
+    ads_frag = _dim_fragment("ad",   _DIM_ADS_COLS,       edc.get("dim_meta_ads"))
+    cr_frag  = _dim_fragment("cr",   _DIM_CREATIVES_COLS, cr_existing)
+    cmp_frag = _dim_fragment("cmp",  _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
+    ast_frag = _dim_fragment("aset", _DIM_ADSETS_COLS,    ast_existing) if ast_existing is not None else ""
+    image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS,   "image_url",   cr_existing)
     thumb_frag = _coalesce_fragment("cr", _THUMBNAIL_URL_FALLBACK_COLS, "thumbnail_url", cr_existing)
     hash_frag  = _coalesce_fragment("cr", _IMAGE_HASH_FALLBACK_COLS,  "image_hash",   cr_existing)
-    dynamic  = _dynamic_select_fragment(extra_fact_columns or [])
-
-    cmp_join = "\n    LEFT JOIN dim_meta_campaigns  cmp ON f.campaign_id = cmp.campaign_id" if cmp_existing is not None else ""
+    dynamic    = _dynamic_select_fragment(extra_fact_columns or [])
 
     joins = (
         "\n    FROM fact_meta_delivery_ad f"
-        "\n    LEFT JOIN dim_meta_accounts  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')"
-        "\n    LEFT JOIN dim_meta_ads        ad ON f.ad_id        = ad.ad_id"
-        "\n    LEFT JOIN dim_meta_creatives  cr ON ad.creative_id = cr.creative_id"
-        + cmp_join
+        "\n    LEFT JOIN dim_meta_accounts  acc  ON f.account_id  = REPLACE(acc.id, 'act_', '')"
+        "\n    LEFT JOIN dim_meta_ads        ad   ON f.ad_id        = ad.ad_id"
+        "\n    LEFT JOIN dim_meta_creatives  cr   ON ad.creative_id = cr.creative_id"
+        + _optional_join_pg("dim_meta_campaigns", "cmp",  "f.campaign_id = cmp.campaign_id", edc)
+        + _optional_join_pg("dim_meta_adsets",    "aset", "f.adset_id    = aset.adset_id",   edc)
     )
 
     select = (
         f"{_STATIC_SELECT}"
-        + (f",\n{acc_frag}" if acc_frag else "")
-        + (f",\n{ads_frag}" if ads_frag else "")
-        + (f",\n{cr_frag}"  if cr_frag  else "")
-        + (f",\n{cmp_frag}" if cmp_frag else "")
+        + (f",\n{acc_frag}"  if acc_frag  else "")
+        + (f",\n{ads_frag}"  if ads_frag  else "")
+        + (f",\n{cr_frag}"   if cr_frag   else "")
+        + (f",\n{cmp_frag}"  if cmp_frag  else "")
+        + (f",\n{ast_frag}"  if ast_frag  else "")
         + (f",\n{image_frag}" if image_frag else "")
         + (f",\n{thumb_frag}" if thumb_frag else "")
         + (f",\n{hash_frag}"  if hash_frag  else "")
@@ -196,34 +224,36 @@ def bigquery_view_sql(
     existing_dim_cols: dict[str, set[str]] | None = None,
 ) -> str:
     edc = existing_dim_cols or {}
-    cr_existing = edc.get("dim_meta_creatives")
+    cr_existing  = edc.get("dim_meta_creatives")
     cmp_existing = edc.get("dim_meta_campaigns")
+    ast_existing = edc.get("dim_meta_adsets")
 
-    acc_frag = _dim_fragment("acc", _DIM_ACCOUNTS_COLS, edc.get("dim_meta_accounts"))
-    ads_frag = _dim_fragment("ad",  _DIM_ADS_COLS,      edc.get("dim_meta_ads"))
-    cr_frag  = _dim_fragment("cr",  _DIM_CREATIVES_COLS, cr_existing)
-    cmp_frag = _dim_fragment("cmp", _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
-    image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS, "image_url", cr_existing)
+    acc_frag = _dim_fragment("acc",  _DIM_ACCOUNTS_COLS,  edc.get("dim_meta_accounts"))
+    ads_frag = _dim_fragment("ad",   _DIM_ADS_COLS,       edc.get("dim_meta_ads"))
+    cr_frag  = _dim_fragment("cr",   _DIM_CREATIVES_COLS, cr_existing)
+    cmp_frag = _dim_fragment("cmp",  _DIM_CAMPAIGNS_COLS, cmp_existing) if cmp_existing is not None else ""
+    ast_frag = _dim_fragment("aset", _DIM_ADSETS_COLS,    ast_existing) if ast_existing is not None else ""
+    image_frag = _coalesce_fragment("cr", _IMAGE_URL_FALLBACK_COLS,    "image_url",    cr_existing)
     thumb_frag = _coalesce_fragment("cr", _THUMBNAIL_URL_FALLBACK_COLS, "thumbnail_url", cr_existing)
-    hash_frag  = _coalesce_fragment("cr", _IMAGE_HASH_FALLBACK_COLS,  "image_hash",   cr_existing)
-    dynamic  = _dynamic_select_fragment(extra_fact_columns or [])
-
-    cmp_join = f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_campaigns` cmp ON f.campaign_id = cmp.campaign_id" if cmp_existing is not None else ""
+    hash_frag  = _coalesce_fragment("cr", _IMAGE_HASH_FALLBACK_COLS,   "image_hash",   cr_existing)
+    dynamic    = _dynamic_select_fragment(extra_fact_columns or [])
 
     joins = (
         f"\n    FROM `{project_id}.{dataset_id}.fact_meta_delivery_ad` f"
-        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_accounts`  acc ON f.account_id  = REPLACE(acc.id, 'act_', '')"
-        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_ads`        ad ON f.ad_id        = ad.ad_id"
-        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_creatives`  cr ON ad.creative_id = cr.creative_id"
-        + cmp_join
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_accounts`  acc  ON f.account_id  = REPLACE(acc.id, 'act_', '')"
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_ads`        ad   ON f.ad_id        = ad.ad_id"
+        f"\n    LEFT JOIN `{project_id}.{dataset_id}.dim_meta_creatives`  cr   ON ad.creative_id = cr.creative_id"
+        + _optional_join_bq(project_id, dataset_id, "dim_meta_campaigns", "cmp",  "f.campaign_id = cmp.campaign_id", edc)
+        + _optional_join_bq(project_id, dataset_id, "dim_meta_adsets",    "aset", "f.adset_id    = aset.adset_id",   edc)
     )
 
     select = (
         f"{_STATIC_SELECT}"
-        + (f",\n{acc_frag}" if acc_frag else "")
-        + (f",\n{ads_frag}" if ads_frag else "")
-        + (f",\n{cr_frag}"  if cr_frag  else "")
-        + (f",\n{cmp_frag}" if cmp_frag else "")
+        + (f",\n{acc_frag}"  if acc_frag  else "")
+        + (f",\n{ads_frag}"  if ads_frag  else "")
+        + (f",\n{cr_frag}"   if cr_frag   else "")
+        + (f",\n{cmp_frag}"  if cmp_frag  else "")
+        + (f",\n{ast_frag}"  if ast_frag  else "")
         + (f",\n{image_frag}" if image_frag else "")
         + (f",\n{thumb_frag}" if thumb_frag else "")
         + (f",\n{hash_frag}"  if hash_frag  else "")
