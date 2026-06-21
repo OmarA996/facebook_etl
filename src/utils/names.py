@@ -1,3 +1,6 @@
+import re
+
+
 PG_MAX_NAME_LEN = 63
 
 
@@ -31,20 +34,15 @@ def normalize_column_name(col: str, max_len: int = PG_MAX_NAME_LEN) -> str:
     """
     Normalize a column name for Postgres:
     - strip spaces
-    - replace spaces, dots, and colons with underscore
+    - replace punctuation/separators with underscore
     - lowercase
     - truncate from the left to max_len
     """
     if col is None:
         return col
-    col = (
-        str(col)
-        .strip()
-        .replace(" ", "_")
-        .replace(".", "_")
-        .replace(":", "_")
-        .lower()
-    )
+    col = str(col).strip().lower()
+    col = re.sub(r"[^a-z0-9_]+", "_", col)
+    col = re.sub(r"_+", "_", col).strip("_")
     if len(col) > max_len:
         col = col[-max_len:]
     return col

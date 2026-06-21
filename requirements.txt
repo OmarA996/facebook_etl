@@ -8,3 +8,4 @@ structlog>=23.0.0,<26.0.0
 psycopg2-binary>=2.9.0,<3.0.0
 google-cloud-bigquery>=3.10.0,<4.0.0
 pyarrow>=14.0.0,<24.0.0
+alembic>=1.13.0,<2.0.0

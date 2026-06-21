@@ -49,35 +49,30 @@ group_name,endpoint_or_pipeline,api_field,current_database_table,current_databas
 03_adsets,adsets-info,destination_type,dim_meta_adsets,destination_type,,approved,
 03_adsets,adsets-info,optimization_goal,dim_meta_adsets,optimization_goal,,approved,
 03_adsets,adsets-info,targeting.age_max,dim_meta_adsets,targeting_age_max,,approved,
-03_adsets,adsets-info,targeting.age_min,dim_meta_adsets,targeting_age_min,,approved,
-03_adsets,adsets-info,targeting.user_age_unknown,dim_meta_adsets,targeting_user_age_unknown,,approved,
-03_adsets,adsets-info,targeting.targeting_automation.advantage_audience,dim_meta_adsets,targeting_targeting_automation_advantage_audience,,approved,
-03_adsets,adsets-info,targeting.targeting_automation.individual_setting_age,dim_meta_adsets,targeting_targeting_automation_individual_setting_age,,approved,
-03_adsets,adsets-info,targeting.targeting_automation.individual_setting_gender,dim_meta_adsets,targeting_targeting_automation_individual_setting_gender,,approved,
-03_adsets,adsets-info,targeting.targeting_automation.individual_setting_geo,dim_meta_adsets,targeting_targeting_automation_individual_setting_geo,,approved,
-03_adsets,adsets-info,targeting.targeting_optimization,dim_meta_adsets,targeting_targeting_optimization,,approved,
-03_adsets,adsets-info,targeting.targeting_relaxation_types.lookalike,dim_meta_adsets,targeting_targeting_relaxation_types_lookalike,,approved,
-03_adsets,adsets-info,targeting.targeting_relaxation_types.custom_audience,dim_meta_adsets,targeting_targeting_relaxation_types_custom_audience,,approved,
-04_ads_settings,ads-info,id,dim_meta_ads_settings,ad_id,,approved,
-04_ads_settings,ads-info,name,dim_meta_ads_settings,ad_name,,approved,
-04_ads_settings,ads-info,account_id,dim_meta_ads_settings,account_id,,approved,
-04_ads_settings,ads-info,adset_id,dim_meta_ads_settings,adset_id,,approved,
-04_ads_settings,ads-info,campaign_id,dim_meta_ads_settings,campaign_id,,approved,
-04_ads_settings,ads-info,created_time,dim_meta_ads_settings,created_time,,approved,
-04_ads_settings,ads-info,updated_time,dim_meta_ads_settings,updated_time,,approved,
-04_ads_settings,ads-info,status,dim_meta_ads_settings,status,,approved,
-04_ads_settings,ads-info,effective_status,dim_meta_ads_settings,effective_status,,approved,
-04_ads_settings,ads-info,configured_status,dim_meta_ads_settings,configured_status,,approved,
-04_ads_settings,ads-info,creative.id,dim_meta_ads_settings,creative_id,,approved,
-04_ads_settings,ads-info,creative.name,dim_meta_ads_settings,creative_name,,approved,
-04_ads_settings,ads-info,ad_review_feedback.global.non-functional_landing_page,dim_meta_ads_settings,ad_review_feedback_global_non_functional_landing_page,,approved,
-04_ads_compat,ads-info,id,dim_meta_ads,ad_id,,approved,Compatibility table mirrored from dim_meta_ads_settings
-04_ads_compat,ads-info,name,dim_meta_ads,ad_name,,approved,Compatibility table mirrored from dim_meta_ads_settings
-04_ads_compat,ads-info,account_id,dim_meta_ads,account_id,,approved,Compatibility table mirrored from dim_meta_ads_settings
-04_ads_compat,ads-info,adset_id,dim_meta_ads,adset_id,,approved,Compatibility table mirrored from dim_meta_ads_settings
-04_ads_compat,ads-info,campaign_id,dim_meta_ads,campaign_id,,approved,Compatibility table mirrored from dim_meta_ads_settings
-04_ads_settings,ads-info,ad_id,dim_meta_ads_settings,ad_id,,approved,Post-rename passthrough (ensure_id_and_name renames id→ad_id before rename_map)
-04_ads_settings,ads-info,ad_name,dim_meta_ads_settings,ad_name,,approved,Post-rename passthrough (ensure_id_and_name renames name→ad_name before rename_map)
+03_adsets,adsets-info,targeting.age_min,dim_meta_adsets,targeting_age_min,,excluded,
+03_adsets,adsets-info,targeting.user_age_unknown,dim_meta_adsets,targeting_user_age_unknown,,excluded,
+03_adsets,adsets-info,targeting.targeting_automation.advantage_audience,dim_meta_adsets,targeting_targeting_automation_advantage_audience,,excluded,
+03_adsets,adsets-info,targeting.targeting_automation.individual_setting_age,dim_meta_adsets,targeting_targeting_automation_individual_setting_age,,excluded,
+03_adsets,adsets-info,targeting.targeting_automation.individual_setting_gender,dim_meta_adsets,targeting_targeting_automation_individual_setting_gender,,excluded,
+03_adsets,adsets-info,targeting.targeting_automation.individual_setting_geo,dim_meta_adsets,targeting_targeting_automation_individual_setting_geo,,excluded,
+03_adsets,adsets-info,targeting.targeting_optimization,dim_meta_adsets,targeting_targeting_optimization,,excluded,
+03_adsets,adsets-info,targeting.targeting_relaxation_types.lookalike,dim_meta_adsets,targeting_targeting_relaxation_types_lookalike,,excluded,
+03_adsets,adsets-info,targeting.targeting_relaxation_types.custom_audience,dim_meta_adsets,targeting_targeting_relaxation_types_custom_audience,,excluded,
+04_ads,ads-info,id,dim_meta_ads,ad_id,,approved,
+04_ads,ads-info,name,dim_meta_ads,ad_name,,approved,
+04_ads,ads-info,account_id,dim_meta_ads,account_id,,approved,
+04_ads,ads-info,adset_id,dim_meta_ads,adset_id,,approved,
+04_ads,ads-info,campaign_id,dim_meta_ads,campaign_id,,approved,
+04_ads,ads-info,created_time,dim_meta_ads,created_time,,approved,
+04_ads,ads-info,updated_time,dim_meta_ads,updated_time,,approved,
+04_ads,ads-info,status,dim_meta_ads,status,,approved,
+04_ads,ads-info,effective_status,dim_meta_ads,effective_status,,approved,
+04_ads,ads-info,configured_status,dim_meta_ads,configured_status,,approved,
+04_ads,ads-info,creative.id,dim_meta_ads,creative_id,,approved,
+04_ads,ads-info,creative.name,dim_meta_ads,creative_name,,approved,
+04_ads,ads-info,ad_review_feedback.global.non-functional_landing_page,dim_meta_ads,ad_review_feedback_global_non_functional_landing_page,,excluded,
+04_ads,ads-info,ad_id,dim_meta_ads,ad_id,,approved,Post-rename passthrough (ensure_id_and_name renames id→ad_id before rename_map)
+04_ads,ads-info,ad_name,dim_meta_ads,ad_name,,approved,Post-rename passthrough (ensure_id_and_name renames name→ad_name before rename_map)
 05_creatives,creatives-info,id,dim_meta_creatives,creative_id,,approved,
 05_creatives,creatives-info,account_id,dim_meta_creatives,account_id,,approved,
 05_creatives,creatives-info,name,dim_meta_creatives,creative_name,,approved,
@@ -118,9 +113,11 @@ group_name,endpoint_or_pipeline,api_field,current_database_table,current_databas
 05_creatives,creatives-info,object_story_spec.video_data.image_hash,dim_meta_creatives,object_story_spec_video_data_image_hash,,approved,
 05_creatives,creatives-info,object_story_spec.video_data.link_description,dim_meta_creatives,object_story_spec_video_data_link_description,,approved,
 05_creatives,creatives-info,object_story_spec.video_data.call_to_action.type,dim_meta_creatives,object_story_spec_video_data_call_to_action_type,,approved,
-05_creatives,creatives-info,asset_feed_spec.optimization_type,dim_meta_creatives,asset_feed_spec_optimization_type,,approved,
-05_creatives,creatives-info,asset_feed_spec.reasons_to_shop,dim_meta_creatives,asset_feed_spec_reasons_to_shop,,approved,
-05_creatives,creatives-info,asset_feed_spec.shops_bundle,dim_meta_creatives,asset_feed_spec_shops_bundle,,approved,
+05_creatives,creatives-info,asset_feed_spec.optimization_type,dim_meta_creatives,asset_feed_spec_optimization_type,,excluded,
+05_creatives,creatives-info,asset_feed_spec.reasons_to_shop,dim_meta_creatives,asset_feed_spec_reasons_to_shop,,excluded,
+05_creatives,creatives-info,asset_feed_spec.shops_bundle,dim_meta_creatives,asset_feed_spec_shops_bundle,,excluded,
+05_creatives,creatives-info,asset_feed_spec_image_url,dim_meta_creatives,asset_feed_spec_image_url,,approved,Extracted from asset_feed_spec.images[0].url by creatives_info pipeline
+05_creatives,creatives-info,asset_feed_spec_image_hash,dim_meta_creatives,asset_feed_spec_image_hash,,approved,Extracted from asset_feed_spec.images[0].hash by creatives_info pipeline
 05_creatives,creatives-info,creative_id,dim_meta_creatives,creative_id,,approved,Post-rename passthrough (ensure_id_and_name renames id→creative_id before rename_map)
 05_creatives,creatives-info,creative_name,dim_meta_creatives,creative_name,,approved,Post-rename passthrough (ensure_id_and_name renames name→creative_name before rename_map)
 06_insights_account,insights-daily account,account_id,fact_meta_delivery_account,account_id,,approved,
@@ -132,9 +129,9 @@ group_name,endpoint_or_pipeline,api_field,current_database_table,current_databas
 06_insights_account,insights-daily account,reach,fact_meta_delivery_account,reach,,approved,
 06_insights_account,insights-daily account,clicks,fact_meta_delivery_account,clicks,,approved,
 06_insights_account,insights-daily account,ctr,fact_meta_delivery_account,ctr,,approved,
-06_insights_account,insights-daily account,cpm,fact_meta_delivery_account,cpm,,approved,
-06_insights_account,insights-daily account,cpp,fact_meta_delivery_account,cpp,,approved,
-06_insights_account,insights-daily account,frequency,fact_meta_delivery_account,frequency,,approved,
+06_insights_account,insights-daily account,cpm,fact_meta_delivery_account,cpm,,excluded,
+06_insights_account,insights-daily account,cpp,fact_meta_delivery_account,cpp,,excluded,
+06_insights_account,insights-daily account,frequency,fact_meta_delivery_account,frequency,,excluded,
 07_insights_campaign,insights-daily campaign,campaign_id,fact_meta_delivery_campaign,campaign_id,,approved,
 07_insights_campaign,insights-daily campaign,campaign_name,fact_meta_delivery_campaign,campaign_name,,approved,
 07_insights_campaign,insights-daily campaign,account_id,fact_meta_delivery_campaign,account_id,,approved,
@@ -184,105 +181,249 @@ group_name,endpoint_or_pipeline,api_field,current_database_table,current_databas
 09_insights_ad,insights-daily ad,clicks,fact_meta_delivery_ad,clicks,,approved,
 09_insights_ad,insights-daily ad,unique_clicks,fact_meta_delivery_ad,unique_clicks,,approved,
 09_insights_ad,insights-daily ad,unique_inline_link_clicks,fact_meta_delivery_ad,unique_inline_link_clicks,,approved,
-09_insights_ad,insights-daily ad,results,fact_meta_delivery_ad,results,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,unique_outbound_clicks,fact_meta_delivery_ad,unique_outbound_clicks,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,outbound_clicks,fact_meta_delivery_ad,outbound_clicks,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,actions,fact_meta_delivery_ad,actions,List metric; expands into many actions_* columns at runtime,approved,
-09_insights_ad,insights-daily ad,action_values,fact_meta_delivery_ad,action_values,List metric; expands into many action_values_* columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_play_actions,fact_meta_delivery_ad,video_play_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_30_sec_watched_actions,fact_meta_delivery_ad,video_30_sec_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_avg_time_watched_actions,fact_meta_delivery_ad,video_avg_time_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_p100_watched_actions,fact_meta_delivery_ad,video_p100_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_p25_watched_actions,fact_meta_delivery_ad,video_p25_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_p50_watched_actions,fact_meta_delivery_ad,video_p50_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_p75_watched_actions,fact_meta_delivery_ad,video_p75_watched_actions,List metric; may expand into additional columns at runtime,approved,
-09_insights_ad,insights-daily ad,video_p95_watched_actions,fact_meta_delivery_ad,video_p95_watched_actions,List metric; may expand into additional columns at runtime,approved,
+09_insights_ad,insights-daily ad,results,fact_meta_delivery_ad,results,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,unique_outbound_clicks,fact_meta_delivery_ad,unique_outbound_clicks,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,outbound_clicks,fact_meta_delivery_ad,outbound_clicks,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,actions,fact_meta_delivery_ad,actions,,approved,List metric; expands into many actions_* columns at runtime
+09_insights_ad,insights-daily ad,action_values,fact_meta_delivery_ad,action_values,,approved,List metric; expands into many action_values_* columns at runtime
+09_insights_ad,insights-daily ad,video_play_actions,fact_meta_delivery_ad,video_play_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_30_sec_watched_actions,fact_meta_delivery_ad,video_30_sec_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_avg_time_watched_actions,fact_meta_delivery_ad,video_avg_time_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_p100_watched_actions,fact_meta_delivery_ad,video_p100_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_p25_watched_actions,fact_meta_delivery_ad,video_p25_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_p50_watched_actions,fact_meta_delivery_ad,video_p50_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_p75_watched_actions,fact_meta_delivery_ad,video_p75_watched_actions,,approved,List metric; may expand into additional columns at runtime
+09_insights_ad,insights-daily ad,video_p95_watched_actions,fact_meta_delivery_ad,video_p95_watched_actions,,approved,List metric; may expand into additional columns at runtime
 02_campaigns,campaigns-info,campaign_id,dim_meta_campaigns,campaign_id,,approved,Post-rename passthrough (ensure_id_and_name renames id→campaign_id before rename_map)
 02_campaigns,campaigns-info,campaign_name,dim_meta_campaigns,campaign_name,,approved,Post-rename passthrough (ensure_id_and_name renames name→campaign_name before rename_map)
 03_adsets,adsets-info,adset_id,dim_meta_adsets,adset_id,,approved,Post-rename passthrough (ensure_id_and_name renames id→adset_id before rename_map)
 03_adsets,adsets-info,adset_name,dim_meta_adsets,adset_name,,approved,Post-rename passthrough (ensure_id_and_name renames name→adset_name before rename_map)
-pending_adsets-info,adsets-info,learning_stage_info.attribution_windows,dim_meta_adsets,learning_stage_info_attribution_windows,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.age_range,dim_meta_adsets,targeting_age_range,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.audience_network_positions,dim_meta_adsets,targeting_audience_network_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.brand_safety_content_filter_levels,dim_meta_adsets,targeting_brand_safety_content_filter_levels,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.custom_audiences,dim_meta_adsets,targeting_custom_audiences,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.device_platforms,dim_meta_adsets,targeting_device_platforms,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.excluded_custom_audiences,dim_meta_adsets,targeting_excluded_custom_audiences,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.excluded_geo_locations.cities,dim_meta_adsets,targeting_excluded_geo_locations_cities,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.excluded_geo_locations.countries,dim_meta_adsets,targeting_excluded_geo_locations_countries,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.excluded_geo_locations.location_types,dim_meta_adsets,targeting_excluded_geo_locations_location_types,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.exclusions.work_employers,dim_meta_adsets,targeting_exclusions_work_employers,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.facebook_positions,dim_meta_adsets,targeting_facebook_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.flexible_spec,dim_meta_adsets,targeting_flexible_spec,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.genders,dim_meta_adsets,targeting_genders,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.cities,dim_meta_adsets,targeting_geo_locations_cities,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.countries,dim_meta_adsets,targeting_geo_locations_countries,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.custom_locations,dim_meta_adsets,targeting_geo_locations_custom_locations,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.location_types,dim_meta_adsets,targeting_geo_locations_location_types,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.places,dim_meta_adsets,targeting_geo_locations_places,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.geo_locations.regions,dim_meta_adsets,targeting_geo_locations_regions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.instagram_positions,dim_meta_adsets,targeting_instagram_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.locales,dim_meta_adsets,targeting_locales,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.messenger_positions,dim_meta_adsets,targeting_messenger_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.product_audience_specs,dim_meta_adsets,targeting_product_audience_specs,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.publisher_platforms,dim_meta_adsets,targeting_publisher_platforms,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.age,dim_meta_adsets,targeting_targeting_automation_individual_setting_age,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.gender,dim_meta_adsets,targeting_targeting_automation_individual_setting_gender,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.geo,dim_meta_adsets,targeting_targeting_automation_individual_setting_geo,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.threads_positions,dim_meta_adsets,targeting_threads_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.user_device,dim_meta_adsets,targeting_user_device,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.user_os,dim_meta_adsets,targeting_user_os,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_adsets-info,adsets-info,targeting.whatsapp_positions,dim_meta_adsets,targeting_whatsapp_positions,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.global.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_global_nonexistent functionality,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.global.Spam,dim_meta_ads_settings,ad_review_feedback_global_spam,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.placement_specific.facebook.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_placement_specific_facebook_nonexistent func,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.placement_specific.facebook.Spam,dim_meta_ads_settings,ad_review_feedback_placement_specific_facebook_spam,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.placement_specific.instagram.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_placement_specific_instagram_nonexistent fun,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,ad_review_feedback.placement_specific.instagram.Spam,dim_meta_ads_settings,ad_review_feedback_placement_specific_instagram_spam,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,creative_id,dim_meta_ads_settings,creative_id,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,learning_stage_info.attribution_windows,dim_meta_adsets,learning_stage_info_attribution_windows,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.age_range,dim_meta_adsets,targeting_age_range,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.audience_network_positions,dim_meta_adsets,targeting_audience_network_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.brand_safety_content_filter_levels,dim_meta_adsets,targeting_brand_safety_content_filter_levels,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.custom_audiences,dim_meta_adsets,targeting_custom_audiences,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.device_platforms,dim_meta_adsets,targeting_device_platforms,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.excluded_custom_audiences,dim_meta_adsets,targeting_excluded_custom_audiences,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.excluded_geo_locations.cities,dim_meta_adsets,targeting_excluded_geo_locations_cities,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.excluded_geo_locations.countries,dim_meta_adsets,targeting_excluded_geo_locations_countries,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.excluded_geo_locations.location_types,dim_meta_adsets,targeting_excluded_geo_locations_location_types,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.exclusions.work_employers,dim_meta_adsets,targeting_exclusions_work_employers,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.facebook_positions,dim_meta_adsets,targeting_facebook_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.flexible_spec,dim_meta_adsets,targeting_flexible_spec,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.genders,dim_meta_adsets,targeting_genders,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.cities,dim_meta_adsets,targeting_geo_locations_cities,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.countries,dim_meta_adsets,targeting_geo_locations_countries,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.custom_locations,dim_meta_adsets,targeting_geo_locations_custom_locations,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.location_types,dim_meta_adsets,targeting_geo_locations_location_types,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.places,dim_meta_adsets,targeting_geo_locations_places,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.geo_locations.regions,dim_meta_adsets,targeting_geo_locations_regions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.instagram_positions,dim_meta_adsets,targeting_instagram_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.locales,dim_meta_adsets,targeting_locales,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.messenger_positions,dim_meta_adsets,targeting_messenger_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.product_audience_specs,dim_meta_adsets,targeting_product_audience_specs,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.publisher_platforms,dim_meta_adsets,targeting_publisher_platforms,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.age,dim_meta_adsets,targeting_targeting_automation_individual_setting_age,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.gender,dim_meta_adsets,targeting_targeting_automation_individual_setting_gender,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.targeting_automation.individual_setting.geo,dim_meta_adsets,targeting_targeting_automation_individual_setting_geo,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.threads_positions,dim_meta_adsets,targeting_threads_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.user_device,dim_meta_adsets,targeting_user_device,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.user_os,dim_meta_adsets,targeting_user_os,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_adsets-info,adsets-info,targeting.whatsapp_positions,dim_meta_adsets,targeting_whatsapp_positions,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.global.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_global_nonexistent functionality,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.global.Spam,dim_meta_ads_settings,ad_review_feedback_global_spam,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.placement_specific.facebook.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_placement_specific_facebook_nonexistent func,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.placement_specific.facebook.Spam,dim_meta_ads_settings,ad_review_feedback_placement_specific_facebook_spam,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.placement_specific.instagram.Nonexistent Functionality,dim_meta_ads_settings,ad_review_feedback_placement_specific_instagram_nonexistent fun,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,ad_review_feedback.placement_specific.instagram.Spam,dim_meta_ads_settings,ad_review_feedback_placement_specific_instagram_spam,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,creative_id,dim_meta_ads_settings,creative_id,,approved,Auto-detected: set rename_to and change status to approved to load
 pending_ads-info,ads-info,issues_info,dim_meta_ads_settings,issues_info,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_ads-info,ads-info,tracking_specs,dim_meta_ads_settings,tracking_specs,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.attachment_style,dim_meta_creatives,object_story_spec_link_data_attachment_style,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.app_destination,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_app_destinatio,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.app_link,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_app_link,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.lead_gen_form_id,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_lead_gen_form_,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.link,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_link,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.link_caption,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_link_caption,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.page,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_page,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.child_attachments,dim_meta_creatives,object_story_spec_link_data_child_attachments,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.event_id,dim_meta_creatives,object_story_spec_link_data_event_id,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.100x100,dim_meta_creatives,object_story_spec_link_data_image_crops_100x100,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.191x100,dim_meta_creatives,object_story_spec_link_data_image_crops_191x100,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.90x160,dim_meta_creatives,object_story_spec_link_data_image_crops_90x160,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.multi_share_end_card,dim_meta_creatives,object_story_spec_link_data_multi_share_end_card,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.multi_share_optimized,dim_meta_creatives,object_story_spec_link_data_multi_share_optimized,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.page_welcome_message,dim_meta_creatives,object_story_spec_link_data_page_welcome_message,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_link_data_post_click_configuration_post_click,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_link_data_post_click_configuration_post_click,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.retailer_item_ids,dim_meta_creatives,object_story_spec_link_data_retailer_item_ids,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.link_data.use_flexible_image_aspect_ratio,dim_meta_creatives,object_story_spec_link_data_use_flexible_image_aspect_ratio,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.automated_product_tags,dim_meta_creatives,object_story_spec_template_data_automated_product_tags,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.boosted_product_set_id,dim_meta_creatives,object_story_spec_template_data_boosted_product_set_id,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.child_attachments,dim_meta_creatives,object_story_spec_template_data_child_attachments,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.force_single_link,dim_meta_creatives,object_story_spec_template_data_force_single_link,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.format_option,dim_meta_creatives,object_story_spec_template_data_format_option,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.image_layer_specs,dim_meta_creatives,object_story_spec_template_data_image_layer_specs,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.multi_share_end_card,dim_meta_creatives,object_story_spec_template_data_multi_share_end_card,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_template_data_post_click_configuration_post_c,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_template_data_post_click_configuration_post_c,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.retailer_item_ids,dim_meta_creatives,object_story_spec_template_data_retailer_item_ids,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.template_data.show_multiple_images,dim_meta_creatives,object_story_spec_template_data_show_multiple_images,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.app_destination,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_app_destinati,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.app_link,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_app_link,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.event_id,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_event_id,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.lead_gen_form_id,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_lead_gen_form,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link_caption,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link_caption,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link_format,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link_format,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.page,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_page,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.page_welcome_message,dim_meta_creatives,object_story_spec_video_data_page_welcome_message,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_video_data_post_click_configuration_post_clic,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_video_data_post_click_configuration_post_clic,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.video_data.retailer_item_ids,dim_meta_creatives,object_story_spec_video_data_retailer_item_ids,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.photo_data.caption,dim_meta_creatives,object_story_spec_photo_data_caption,,pending,Auto-detected: set rename_to and change status to approved to load
-pending_creatives-info,creatives-info,object_story_spec.photo_data.image_hash,dim_meta_creatives,object_story_spec_photo_data_image_hash,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_ads-info,ads-info,tracking_specs,dim_meta_ads_settings,tracking_specs,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.attachment_style,dim_meta_creatives,object_story_spec_link_data_attachment_style,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.app_destination,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_app_destinatio,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.app_link,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_app_link,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.lead_gen_form_id,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_lead_gen_form_,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.link,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_link,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.link_caption,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_link_caption,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.page,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_page,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.child_attachments,dim_meta_creatives,object_story_spec_link_data_child_attachments,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.event_id,dim_meta_creatives,object_story_spec_link_data_event_id,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.100x100,dim_meta_creatives,object_story_spec_link_data_image_crops_100x100,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.191x100,dim_meta_creatives,object_story_spec_link_data_image_crops_191x100,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.image_crops.90x160,dim_meta_creatives,object_story_spec_link_data_image_crops_90x160,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.multi_share_end_card,dim_meta_creatives,object_story_spec_link_data_multi_share_end_card,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.multi_share_optimized,dim_meta_creatives,object_story_spec_link_data_multi_share_optimized,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.page_welcome_message,dim_meta_creatives,object_story_spec_link_data_page_welcome_message,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_link_data_post_click_configuration_post_click,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_link_data_post_click_configuration_post_click,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.retailer_item_ids,dim_meta_creatives,object_story_spec_link_data_retailer_item_ids,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.use_flexible_image_aspect_ratio,dim_meta_creatives,object_story_spec_link_data_use_flexible_image_aspect_ratio,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.automated_product_tags,dim_meta_creatives,object_story_spec_template_data_automated_product_tags,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.boosted_product_set_id,dim_meta_creatives,object_story_spec_template_data_boosted_product_set_id,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.child_attachments,dim_meta_creatives,object_story_spec_template_data_child_attachments,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.force_single_link,dim_meta_creatives,object_story_spec_template_data_force_single_link,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.format_option,dim_meta_creatives,object_story_spec_template_data_format_option,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.image_layer_specs,dim_meta_creatives,object_story_spec_template_data_image_layer_specs,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.multi_share_end_card,dim_meta_creatives,object_story_spec_template_data_multi_share_end_card,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_template_data_post_click_configuration_post_c,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_template_data_post_click_configuration_post_c,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.retailer_item_ids,dim_meta_creatives,object_story_spec_template_data_retailer_item_ids,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.show_multiple_images,dim_meta_creatives,object_story_spec_template_data_show_multiple_images,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.app_destination,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_app_destinati,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.app_link,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_app_link,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.event_id,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_event_id,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.lead_gen_form_id,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_lead_gen_form,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link_caption,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link_caption,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.link_format,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_link_format,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.call_to_action.value.page,dim_meta_creatives,object_story_spec_video_data_call_to_action_value_page,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.page_welcome_message,dim_meta_creatives,object_story_spec_video_data_page_welcome_message,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.post_click_configuration.post_click_item_description,dim_meta_creatives,object_story_spec_video_data_post_click_configuration_post_clic,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.post_click_configuration.post_click_item_headline,dim_meta_creatives,object_story_spec_video_data_post_click_configuration_post_clic,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.video_data.retailer_item_ids,dim_meta_creatives,object_story_spec_video_data_retailer_item_ids,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.photo_data.caption,dim_meta_creatives,object_story_spec_photo_data_caption,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.photo_data.image_hash,dim_meta_creatives,object_story_spec_photo_data_image_hash,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_add_payment_info,fact_meta_delivery_ad,action_values_add_payment_info,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_add_to_cart,fact_meta_delivery_ad,action_values_add_to_cart,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_initiate_checkout,fact_meta_delivery_ad,action_values_initiate_checkout,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_add_payment_info,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_add_payment_info,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_add_to_cart,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_initiate_checkout,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_initiate_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_purchase,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_search,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_search,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_offsite_conversion_fb_pixel_view_content,fact_meta_delivery_ad,action_values_offsite_conversion_fb_pixel_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_omni_add_to_cart,fact_meta_delivery_ad,action_values_omni_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_omni_initiated_checkout,fact_meta_delivery_ad,action_values_omni_initiated_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_omni_purchase,fact_meta_delivery_ad,action_values_omni_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_omni_search,fact_meta_delivery_ad,action_values_omni_search,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_omni_view_content,fact_meta_delivery_ad,action_values_omni_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_add_to_cart,fact_meta_delivery_ad,action_values_onsite_web_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_app_add_to_cart,fact_meta_delivery_ad,action_values_onsite_web_app_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_app_purchase,fact_meta_delivery_ad,action_values_onsite_web_app_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_app_view_content,fact_meta_delivery_ad,action_values_onsite_web_app_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_initiate_checkout,fact_meta_delivery_ad,action_values_onsite_web_initiate_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_purchase,fact_meta_delivery_ad,action_values_onsite_web_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_onsite_web_view_content,fact_meta_delivery_ad,action_values_onsite_web_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_purchase,fact_meta_delivery_ad,action_values_purchase,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_search,fact_meta_delivery_ad,action_values_search,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_view_content,fact_meta_delivery_ad,action_values_view_content,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_web_app_in_store_purchase,fact_meta_delivery_ad,action_values_web_app_in_store_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,action_values_web_in_store_purchase,fact_meta_delivery_ad,action_values_web_in_store_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_add_payment_info,fact_meta_delivery_ad,actions_add_payment_info,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_add_to_cart,fact_meta_delivery_ad,actions_add_to_cart,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_comment,fact_meta_delivery_ad,actions_comment,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_complete_registration,fact_meta_delivery_ad,actions_complete_registration,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_initiate_checkout,fact_meta_delivery_ad,actions_initiate_checkout,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_landing_page_view,fact_meta_delivery_ad,actions_landing_page_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_lead,fact_meta_delivery_ad,actions_lead,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_like,fact_meta_delivery_ad,actions_like,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_link_click,fact_meta_delivery_ad,actions_link_click,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_complete_registration_add_meta_leads,fact_meta_delivery_ad,actions_offsite_complete_registration_add_meta_leads,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_content_view_add_meta_leads,fact_meta_delivery_ad,actions_offsite_content_view_add_meta_leads,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_custom_651875354521550,fact_meta_delivery_ad,actions_offsite_conversion_custom_651875354521550,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_add_payment_info,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_add_payment_info,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_add_to_cart,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_complete_registration,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_complete_registration,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_initiate_checkout,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_initiate_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_purchase,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_search,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_search,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_conversion_fb_pixel_view_content,fact_meta_delivery_ad,actions_offsite_conversion_fb_pixel_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_search_add_meta_leads,fact_meta_delivery_ad,actions_offsite_search_add_meta_leads,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_add_to_cart,fact_meta_delivery_ad,actions_omni_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_complete_registration,fact_meta_delivery_ad,actions_omni_complete_registration,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_initiated_checkout,fact_meta_delivery_ad,actions_omni_initiated_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_landing_page_view,fact_meta_delivery_ad,actions_omni_landing_page_view,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_purchase,fact_meta_delivery_ad,actions_omni_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_search,fact_meta_delivery_ad,actions_omni_search,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_omni_view_content,fact_meta_delivery_ad,actions_omni_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_app_purchase,fact_meta_delivery_ad,actions_onsite_app_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_lead,fact_meta_delivery_ad,actions_onsite_conversion_lead,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_lead_grouped,fact_meta_delivery_ad,actions_onsite_conversion_lead_grouped,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_block,fact_meta_delivery_ad,actions_onsite_conversion_messaging_block,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_conversation_replied_7d,fact_meta_delivery_ad,actions_onsite_conversion_messaging_conversation_replied_7d,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_conversation_started_7d,fact_meta_delivery_ad,actions_onsite_conversion_messaging_conversation_started_7d,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_first_reply,fact_meta_delivery_ad,actions_onsite_conversion_messaging_first_reply,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_order_created_v2,fact_meta_delivery_ad,actions_onsite_conversion_messaging_order_created_v2,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_user_call_placed,fact_meta_delivery_ad,actions_onsite_conversion_messaging_user_call_placed,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_user_depth_2_message_send,fact_meta_delivery_ad,actions_onsite_conversion_messaging_user_depth_2_message_send,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_user_depth_3_message_send,fact_meta_delivery_ad,actions_onsite_conversion_messaging_user_depth_3_message_send,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_user_depth_5_message_send,fact_meta_delivery_ad,actions_onsite_conversion_messaging_user_depth_5_message_send,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_messaging_welcome_message_view,fact_meta_delivery_ad,actions_onsite_conversion_messaging_welcome_message_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_net_comment,fact_meta_delivery_ad,actions_onsite_conversion_post_net_comment,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_net_like,fact_meta_delivery_ad,actions_onsite_conversion_post_net_like,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_net_save,fact_meta_delivery_ad,actions_onsite_conversion_post_net_save,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_save,fact_meta_delivery_ad,actions_onsite_conversion_post_save,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_unlike,fact_meta_delivery_ad,actions_onsite_conversion_post_unlike,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_post_unsave,fact_meta_delivery_ad,actions_onsite_conversion_post_unsave,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_purchase,fact_meta_delivery_ad,actions_onsite_conversion_purchase,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_conversion_total_messaging_connection,fact_meta_delivery_ad,actions_onsite_conversion_total_messaging_connection,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_add_to_cart,fact_meta_delivery_ad,actions_onsite_web_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_app_add_to_cart,fact_meta_delivery_ad,actions_onsite_web_app_add_to_cart,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_app_purchase,fact_meta_delivery_ad,actions_onsite_web_app_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_app_view_content,fact_meta_delivery_ad,actions_onsite_web_app_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_initiate_checkout,fact_meta_delivery_ad,actions_onsite_web_initiate_checkout,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_lead,fact_meta_delivery_ad,actions_onsite_web_lead,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_purchase,fact_meta_delivery_ad,actions_onsite_web_purchase,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_onsite_web_view_content,fact_meta_delivery_ad,actions_onsite_web_view_content,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_page_engagement,fact_meta_delivery_ad,actions_page_engagement,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_photo_view,fact_meta_delivery_ad,actions_photo_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post,fact_meta_delivery_ad,actions_post,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post_engagement,fact_meta_delivery_ad,actions_post_engagement,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post_interaction_gross,fact_meta_delivery_ad,actions_post_interaction_gross,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post_interaction_net,fact_meta_delivery_ad,actions_post_interaction_net,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post_reaction,fact_meta_delivery_ad,actions_post_reaction,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_post_uncomment,fact_meta_delivery_ad,actions_post_uncomment,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_purchase,fact_meta_delivery_ad,actions_purchase,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_search,fact_meta_delivery_ad,actions_search,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_video_view,fact_meta_delivery_ad,actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_view_content,fact_meta_delivery_ad,actions_view_content,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_web_app_in_store_purchase,fact_meta_delivery_ad,actions_web_app_in_store_purchase,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_web_in_store_purchase,fact_meta_delivery_ad,actions_web_in_store_purchase,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,outbound_clicks_outbound_click,fact_meta_delivery_ad,outbound_clicks_outbound_click,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,results_indicator,fact_meta_delivery_ad,results_indicator,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,results_value,fact_meta_delivery_ad,results_value,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,unique_outbound_clicks_outbound_click,fact_meta_delivery_ad,unique_outbound_clicks_outbound_click,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_30_sec_watched_actions_video_view,fact_meta_delivery_ad,video_30_sec_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_avg_time_watched_actions_video_view,fact_meta_delivery_ad,video_avg_time_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_p100_watched_actions_video_view,fact_meta_delivery_ad,video_p100_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_p25_watched_actions_video_view,fact_meta_delivery_ad,video_p25_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_p50_watched_actions_video_view,fact_meta_delivery_ad,video_p50_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_p75_watched_actions_video_view,fact_meta_delivery_ad,video_p75_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_p95_watched_actions_video_view,fact_meta_delivery_ad,video_p95_watched_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,video_play_actions_video_view,fact_meta_delivery_ad,video_play_actions_video_view,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,estimated_ad_recall_rate,fact_meta_delivery_ad,estimated_ad_recall_rate,,approved,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.amount,dim_meta_accounts,funding_source_details_coupon_amount,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.coupon_id,dim_meta_accounts,funding_source_details_coupon_coupon_id,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.currency,dim_meta_accounts,funding_source_details_coupon_currency,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.display_amount,dim_meta_accounts,funding_source_details_coupon_display_amount,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.expiration,dim_meta_accounts,funding_source_details_coupon_expiration,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.original_amount,dim_meta_accounts,funding_source_details_coupon_original_amount,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.original_display_amount,dim_meta_accounts,funding_source_details_coupon_original_display_amount,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupon.start_date,dim_meta_accounts,funding_source_details_coupon_start_date,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_accounts-info,accounts-info,funding_source_details.coupons,dim_meta_accounts,funding_source_details_coupons,,excluded,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.template_data.call_to_action.value.link_caption,dim_meta_creatives,object_story_spec_template_data_call_to_action_value_link_capti,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_purchase_add_20_s_calls,fact_meta_delivery_ad,actions_offsite_purchase_add_20_s_calls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.ad_formats,dim_meta_creatives,asset_feed_spec_ad_formats,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.additional_data.is_click_to_message,dim_meta_creatives,asset_feed_spec_additional_data_is_click_to_message,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.additional_data.multi_share_end_card,dim_meta_creatives,asset_feed_spec_additional_data_multi_share_end_card,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.additional_data.page_welcome_message,dim_meta_creatives,asset_feed_spec_additional_data_page_welcome_message,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.asset_customization_rules,dim_meta_creatives,asset_feed_spec_asset_customization_rules,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.bodies,dim_meta_creatives,asset_feed_spec_bodies,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.call_to_action_types,dim_meta_creatives,asset_feed_spec_call_to_action_types,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.call_to_actions,dim_meta_creatives,asset_feed_spec_call_to_actions,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.carousels,dim_meta_creatives,asset_feed_spec_carousels,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.descriptions,dim_meta_creatives,asset_feed_spec_descriptions,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.images,dim_meta_creatives,asset_feed_spec_images,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.link_urls,dim_meta_creatives,asset_feed_spec_link_urls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.message_extensions,dim_meta_creatives,asset_feed_spec_message_extensions,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.promotional_metadata.allowed_coupon_code_sources,dim_meta_creatives,asset_feed_spec_promotional_metadata_allowed_coupon_code_source,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.promotional_metadata.is_auto_update_allowed,dim_meta_creatives,asset_feed_spec_promotional_metadata_is_auto_update_allowed,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.promotional_metadata.manual_coupon_codes,dim_meta_creatives,asset_feed_spec_promotional_metadata_manual_coupon_codes,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.titles,dim_meta_creatives,asset_feed_spec_titles,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,asset_feed_spec.videos,dim_meta_creatives,asset_feed_spec_videos,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_creatives-info,creatives-info,object_story_spec.link_data.call_to_action.value.link_format,dim_meta_creatives,object_story_spec_link_data_call_to_action_value_link_format,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_complete_registration_add_20_s_calls,fact_meta_delivery_ad,actions_offsite_complete_registration_add_20_s_calls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_content_view_add_20_s_calls,fact_meta_delivery_ad,actions_offsite_content_view_add_20_s_calls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_add_to_cart_add_20_s_calls,fact_meta_delivery_ad,actions_offsite_add_to_cart_add_20_s_calls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_offsite_initiate_checkout_add_20_s_calls,fact_meta_delivery_ad,actions_offsite_initiate_checkout_add_20_s_calls,,pending,Auto-detected: set rename_to and change status to approved to load
+pending_insights-daily ad,insights-daily ad,actions_rsvp,fact_meta_delivery_ad,actions_rsvp,,pending,Auto-detected: set rename_to and change status to approved to load

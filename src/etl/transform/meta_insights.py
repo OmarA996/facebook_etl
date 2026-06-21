@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 from src.utils.logging_utils import get_logger
-from src.etl.transform.core import flatten_json, fill_numeric_keep_nulls
+from src.etl.transform.core import apply_rename_map, flatten_json, fill_numeric_keep_nulls
 
 logger = get_logger("transform.insights")
 
@@ -144,5 +144,11 @@ def normalize_insights(
             df[b] = None
 
     df = fill_numeric_keep_nulls(df)
+
+    # Apply column renames and filter out pending/excluded fields from the CSV.
+    # Pipeline key is e.g. "insights-daily ad" / "insights-daily adset" etc.
+    pipeline_key = f"insights-daily {level}"
+    table_name = get_insights_table_name(level, breakdowns)
+    df = apply_rename_map(df, pipeline_key, table_name=table_name)
 
     return df

@@ -39,6 +39,10 @@ class Settings(BaseSettings):
     BQ_LOCATION: str = ""
     BQ_CREDENTIALS_PATH: str = ""
     BQ_IMPERSONATE_SERVICE_ACCOUNT: str = ""
+
+    # Comma-separated allow-list of profile names. When non-empty, --db-profile
+    # values outside this list are rejected at config-load time.
+    REGISTERED_PROFILES: str = ""
     ACCOUNT_REGISTRY_PATH: str = Field(default_factory=lambda: os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
         "data",
@@ -130,6 +134,47 @@ class Settings(BaseSettings):
                 if value:
                     profiles[profile] = value
         return profiles
+
+    @property
+    def registered_profiles_set(self) -> set[str]:
+        return {p.strip().lower() for p in self.REGISTERED_PROFILES.split(",") if p.strip()}
+
+    def known_profiles(self) -> set[str]:
+        """All profile names discoverable from environment variables."""
+        keys: set[str] = set()
+        keys.update(self.meta_ad_account_ids_profiles.keys())
+        keys.update(self.db_conn_profiles.keys())
+        keys.update(self.bq_project_profiles.keys())
+        keys.update(self.bq_dataset_profiles.keys())
+        return keys
+
+    def validate_profile(self, profile: Optional[str]) -> None:
+        """Raise ValueError if a non-default profile is unknown.
+
+        When REGISTERED_PROFILES is set, only those names are accepted.
+        Otherwise we accept any profile that has at least one matching
+        env var (DB_CONN_STRING_<P>, META_AD_ACCOUNT_IDS_<P>, or BQ_*_<P>),
+        which catches typos that would have silently fallen back to the
+        default profile.
+        """
+        if not profile:
+            return
+        normalized = profile.strip().lower()
+        registered = self.registered_profiles_set
+        if registered:
+            if normalized not in registered:
+                raise ValueError(
+                    f"Unknown profile '{profile}'. Registered profiles: "
+                    f"{sorted(registered)}. Add it to REGISTERED_PROFILES in .env "
+                    "to enable it."
+                )
+            return
+        if normalized not in self.known_profiles():
+            raise ValueError(
+                f"Unknown profile '{profile}'. No env vars found with suffix _{profile.upper()}. "
+                "Define DB_CONN_STRING_<PROFILE>, META_AD_ACCOUNT_IDS_<PROFILE>, or "
+                "BQ_*_<PROFILE> in .env, or set REGISTERED_PROFILES to allow-list profiles."
+            )
 
     def get_ad_account_ids(self, profile: Optional[str] = None) -> List[str]:
         if profile:

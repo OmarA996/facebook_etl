@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict, Any
 
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 ID_LIKE_COLUMNS = {
     "id",
@@ -12,6 +16,25 @@ ID_LIKE_COLUMNS = {
     "creative_id",
     "page_id",
 }
+
+
+def _coerce_numeric_if_safe(series: pd.Series) -> pd.Series:
+    """
+    Convert a series to numeric only when every non-null value is numeric-like.
+    Otherwise, leave the series unchanged.
+    """
+    if pd.api.types.is_numeric_dtype(series):
+        return pd.to_numeric(series, errors="coerce")
+
+    non_null = series.dropna()
+    if non_null.empty:
+        return series
+
+    coerced_non_null = pd.to_numeric(non_null, errors="coerce")
+    if coerced_non_null.notna().all():
+        return pd.to_numeric(series, errors="coerce")
+
+    return series
 
 
 def expand_action_array(cell, prefix):
@@ -74,7 +97,7 @@ def flatten_json(records: List[Dict[str, Any]], expand_lists: bool = True) -> pd
         col_lower = str(col).lower()
         if col_lower in ID_LIKE_COLUMNS or col_lower.endswith("_id"):
             continue
-        df[col] = pd.to_numeric(df[col], errors="ignore")
+        df[col] = _coerce_numeric_if_safe(df[col])
 
     return df
 
@@ -115,6 +138,80 @@ def coerce_datetime_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFram
             for ts in parsed
         ]
         df[col] = pd.Series(cleaned, dtype=object)
+    return df
+
+
+def apply_rename_map(
+    df: pd.DataFrame,
+    pipeline: str,
+    table_name: str = "",
+) -> pd.DataFrame:
+    """
+    Rename API field names → DB column names for the given pipeline.
+
+    Behaviour driven by the 'status' column in api_field_rename_template.csv:
+      approved  → renamed (using rename_to if set, else current_database_column)
+      excluded  → column silently dropped from the DataFrame
+      pending   → column skipped (not loaded); a warning is printed listing the fields
+      (unknown) → auto-appended to CSV as 'pending' and skipped this run
+
+    Call this after flatten_json(), before fill_numeric_keep_nulls() or DB save.
+    To add or change a mapping, edit the CSV — no code changes needed.
+    """
+    from src.fields.rename_maps import (
+        get_rename_map,
+        get_excluded_fields,
+        get_pending_fields,
+        get_known_fields,
+        register_new_fields,
+    )
+
+    if df.empty:
+        return df
+
+    df = df.copy()
+    df_cols = set(df.columns)
+
+    # --- 1. Drop excluded fields ---
+    excluded = get_excluded_fields(pipeline) & df_cols
+    if excluded:
+        df.drop(columns=list(excluded), inplace=True)
+        df_cols = set(df.columns)
+
+    # --- 2. Detect brand-new fields (not in CSV at all) and register as pending ---
+    known = get_known_fields(pipeline)
+    brand_new = [c for c in df.columns if c not in known]
+    if brand_new:
+        n = register_new_fields(pipeline, table_name, brand_new)
+        if n:
+            logger.warning(
+                "New API fields auto-registered as pending",
+                pipeline=pipeline,
+                count=n,
+                fields=sorted(brand_new),
+                action="open api_field_rename_template.csv, set rename_to, change status to approved, then re-run",
+            )
+
+    # --- 3. Drop pending fields (new + previously pending) ---
+    pending = get_pending_fields(pipeline) & df_cols
+    # Also drop brand-new fields registered this run (they're now pending too)
+    skip_cols = pending | set(brand_new)
+    if skip_cols:
+        actually_skipped = skip_cols & df_cols
+        if actually_skipped:
+            logger.info(
+                "Pending fields skipped (not loaded until approved in CSV)",
+                pipeline=pipeline,
+                count=len(actually_skipped),
+                fields=sorted(actually_skipped),
+            )
+            df.drop(columns=list(actually_skipped), inplace=True)
+
+    # --- 4. Apply approved renames ---
+    rename = {k: v for k, v in get_rename_map(pipeline).items() if k in df.columns}
+    if rename:
+        df = df.rename(columns=rename)
+
     return df
 
 

@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: meta-etl-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-ads_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  etl:
+    build: .
+    image: meta-etl:latest
+    container_name: meta-etl-app
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./credentials:/app/credentials:ro
+    # By default the container exits after running --help. Override with a
+    # specific command, e.g.:
+    #   docker compose run --rm etl health-check
+    #   docker compose run --rm etl run-daily --to-bigquery
+    command: ["--help"]
+
+  scheduler:
+    build: .
+    image: meta-etl:latest
+    container_name: meta-etl-scheduler
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./credentials:/app/credentials:ro
+    entrypoint: ["python", "scheduler.py"]
+    profiles: ["scheduler"]
+
+volumes:
+  pgdata:

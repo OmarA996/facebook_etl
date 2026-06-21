@@ -78,6 +78,7 @@ def load_ad_account_ids(profile: str | None = None) -> List[str]:
     """
     Return ad account ids for a given profile, falling back to default list.
     """
+    settings.validate_profile(profile)
     registry_rows = load_account_registry(profile=profile)
     if registry_rows:
         return [row["account_id"] for row in registry_rows if row.get("account_id")]
@@ -115,7 +116,10 @@ def load_postgres_config(profile: str | None = None) -> PostgresConfig:
 
     - profile is lowercased and mapped to env var DB_CONN_STRING_<PROFILE>
     - profile=None falls back to DB_CONN_STRING_DEFAULT or DB_CONN_STRING
+    - unknown profiles raise ValueError so typos can't silently fall back
+      to the default and route data into the wrong tenant
     """
+    settings.validate_profile(profile)
     if profile:
         key = profile.lower()
         conn = settings.db_conn_profiles.get(key)
@@ -145,6 +149,7 @@ def load_bigquery_config(profile: str | None = None) -> BigQueryConfig:
     """
     Build a BigQuery config object from environment-backed settings.
     """
+    settings.validate_profile(profile)
     normalized_profile = profile.lower() if profile else None
 
     if normalized_profile:

@@ -42,7 +42,7 @@ def fetch_ads_settings(
     """
     account_ids = ad_account_ids or load_ad_account_ids()
     if not account_ids:
-        raise ValueError("META_AD_ACCOUNT_IDS is empty; provide at least one account id.")
+        raise ValueError("No included account ids were found. Add accounts to the registry and set include_in_etl=True.")
 
     all_rows: List[Dict[str, Any]] = []
 

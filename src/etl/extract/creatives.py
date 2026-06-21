@@ -4,6 +4,9 @@ from typing import Any, Dict, List, Optional
 
 from src.clients.graph_client import GraphAPIClient, GraphAPIError
 from src.config import load_ad_account_ids, load_graph_config
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 graph_cfg = load_graph_config()
 client = GraphAPIClient(
@@ -23,8 +26,6 @@ CREATIVE_FIELDS = [
     "object_story_spec",
     "asset_feed_spec",
     "template_url",
-    "template_url_spec",
-    "degrees_of_freedom_spec",
     "dynamic_ad_voice",
     "product_set_id",
     "url_tags",
@@ -49,14 +50,14 @@ def fetch_creatives(
     """
     account_ids = ad_account_ids or load_ad_account_ids()
     if not account_ids:
-        raise ValueError("META_AD_ACCOUNT_IDS is empty; provide at least one account id.")
+        raise ValueError("No included account ids were found. Add accounts to the registry and set include_in_etl=True.")
 
     all_rows: List[Dict[str, Any]] = []
 
     base_params = {
         "fields": ",".join(CREATIVE_FIELDS),
-        # Smaller page size to avoid oversized responses
-        "limit": 100,
+        # Small page size — creative payloads are large; too high triggers HTTP 500
+        "limit": 10,
     }
 
     def _fetch_for_account(account_id: str) -> List[Dict[str, Any]]:
@@ -71,15 +72,17 @@ def fetch_creatives(
         with ThreadPoolExecutor(max_workers=workers) as pool:
             futures = {pool.submit(_fetch_for_account, acct): acct for acct in account_ids}
             for fut in as_completed(futures):
+                acct = futures[fut]
                 try:
-                    rows = fut.result()
+                    all_rows.extend(fut.result())
                 except Exception as e:
-                    raise GraphAPIError(f"Creatives fetch failed for {futures[fut]}: {e}") from e
-                all_rows.extend(rows)
+                    logger.warning("Skipping account due to error", account=acct, error=str(e))
     else:
         for account_id in account_ids:
-            rows = _fetch_for_account(account_id)
-            all_rows.extend(rows)
+            try:
+                all_rows.extend(_fetch_for_account(account_id))
+            except GraphAPIError as e:
+                logger.warning("Skipping account due to error", account=account_id, error=str(e))
 
     return all_rows
 
@@ -95,7 +98,7 @@ def fetch_creatives_with_previews(
     """
     account_ids = ad_account_ids or load_ad_account_ids()
     if not account_ids:
-        raise ValueError("META_AD_ACCOUNT_IDS is empty; provide at least one account id.")
+        raise ValueError("No included account ids were found. Add accounts to the registry and set include_in_etl=True.")
 
     all_rows: List[Dict[str, Any]] = []
     fields = [

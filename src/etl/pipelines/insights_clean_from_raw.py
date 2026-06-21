@@ -8,6 +8,9 @@ from src.config import PostgresConfig
 from src.etl.transform.meta_insights import get_insights_table_name, normalize_insights
 from src.etl.load.postgres_loader import save_df_to_postgres_upsert
 from src.schema.unique_keys import UNIQUE_KEYS
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 def _canonical_breakdown_str(breakdowns: Optional[List[str]]) -> str:
@@ -70,7 +73,7 @@ def run_insights_clean_from_raw(
         rows = conn.execute(text(sql), params).fetchall()
 
     if not rows:
-        print("[insights-clean] No raw rows found for the given filters.")
+        logger.warning("No raw rows found for the given filters", level=level)
         return None
 
     breakdown_values = set()
@@ -89,7 +92,7 @@ def run_insights_clean_from_raw(
         records.append(payload)
 
     if not records:
-        print("[insights-clean] No payloads decoded from raw rows.")
+        logger.warning("No payloads decoded from raw rows", level=level)
         return None
 
     # Determine effective breakdowns if not provided
@@ -104,21 +107,22 @@ def run_insights_clean_from_raw(
     else:
         effective_breakdowns = breakdowns
 
-    print(f"[insights-clean] Loaded {len(records)} raw rows (distinct breakdowns={sorted(breakdown_values)}).")
+    logger.info("Loaded raw rows", count=len(records), distinct_breakdowns=sorted(breakdown_values))
 
     df = normalize_insights(records, level=level, breakdowns=effective_breakdowns)
     norm_count = len(df)
     if norm_count > len(records):
-        print(
-            f"[insights-clean] WARNING: normalized rows ({norm_count}) exceed raw rows ({len(records)}); "
-            "dropping duplicates."
+        logger.warning(
+            "Normalized rows exceed raw rows, dropping duplicates",
+            normalized=norm_count,
+            raw=len(records),
         )
         df = df.drop_duplicates()
         norm_count = len(df)
-    print(f"[insights-clean] Normalized rows: {norm_count}; shape={df.shape}")
+    logger.info("Normalized rows", count=norm_count, shape=df.shape)
 
     if not to_db:
-        print("[insights-clean] --no-db specified; skipping fact table upsert.")
+        logger.info("--no-db specified, skipping fact table upsert")
         return df
 
     table_name = get_insights_table_name(level, effective_breakdowns)
@@ -126,7 +130,7 @@ def run_insights_clean_from_raw(
     if unique_cols is None:
         raise ValueError(f"No UNIQUE_KEYS defined for table '{table_name}'")
 
-    print(f"[insights-clean] Upserting into '{table_name}' with unique_cols={unique_cols}...")
+    logger.info("Upserting into fact table", table=table_name, unique_cols=unique_cols)
     save_df_to_postgres_upsert(
         df,
         table_name,

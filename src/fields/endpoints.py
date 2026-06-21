@@ -1,7 +1,7 @@
 # src/fields/endpoints.py
 
 ENDPOINT_FIELDS = {
-    # ============ INSIGHTS ============ #
+    # Delivery insights fields
     "insights": {
         "ad": [
             "date_start","date_stop",
@@ -11,7 +11,7 @@ ENDPOINT_FIELDS = {
             "ad_id","ad_name",
             "objective","results","optimization_goal",
             "spend","social_spend","reach","impressions",
-            "estimated_ad_recallers","clicks","unique_clicks",
+            "estimated_ad_recall_rate","clicks","unique_clicks",
             "unique_inline_link_clicks",
             "unique_outbound_clicks","outbound_clicks",
             "video_30_sec_watched_actions","video_avg_time_watched_actions",
@@ -41,24 +41,4 @@ ENDPOINT_FIELDS = {
             "ctr", "cpm", "cpp", "frequency",
         ],
     },
-
-    # ============ CAMPAIGNS ============ #
-    "campaigns": [
-        "id", "name", "objective", "status",
-        "created_time", "effective_status", "buying_type",
-        "start_time", "stop_time",
-    ],
-
-    # ============ ADSETS ============ #
-    "adsets": [
-        "id", "name", "campaign_id", "daily_budget", "lifetime_budget",
-        "bid_strategy", "optimization_goal", "status", "effective_status",
-    ],
-
-    # ============ ADS ============ #
-    "ads": [
-        "id", "name", "adset_id", "campaign_id",
-        "creative", "status", "effective_status",
-        "configured_status", "updated_time",
-    ],
 }

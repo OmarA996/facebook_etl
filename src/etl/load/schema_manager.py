@@ -7,7 +7,11 @@ from sqlalchemy.engine.url import make_url, URL
 
 from src.schema.tables import TABLE_SCHEMAS
 from src.schema.unique_keys import UNIQUE_KEYS
+from src.schema.views import STATIC_FACT_COLUMNS, VIEW_NAME, postgres_view_sql
 from src.utils.names import shorten_from_left, shorten_from_right, normalize_column_name
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 TYPE_INFER_MAP = {
     "int64": "INTEGER",
@@ -79,6 +83,10 @@ def _url_without_db(url: URL) -> URL:
     return url.set(database="postgres")
 
 
+def _quote_ident(name: str) -> str:
+    return '"' + str(name).replace('"', '""') + '"'
+
+
 def ensure_database_exists(conn_string: str) -> None:
     """
     Ensure the target database exists; create if missing.
@@ -87,14 +95,15 @@ def ensure_database_exists(conn_string: str) -> None:
     dbname = _parse_dbname(url)
     server_url = _url_without_db(url)
 
-    server_engine = create_engine(server_url)
+    server_engine = create_engine(server_url, isolation_level="AUTOCOMMIT")
     with server_engine.connect() as conn:
         exists = conn.execute(
             text("SELECT 1 FROM pg_database WHERE datname=:dname"), {"dname": dbname}
         ).scalar()
         if not exists:
-            conn.execute(text(f"CREATE DATABASE {dbname} ENCODING 'UTF8' TEMPLATE template1"))
-            print(f"[schema_manager] Created database '{dbname}'.")
+            quoted_dbname = _quote_ident(dbname)
+            conn.execute(text(f"CREATE DATABASE {quoted_dbname} ENCODING 'UTF8' TEMPLATE template1"))
+            logger.info("Created database", db=dbname)
 
 
 def _create_table(engine: Engine, table_name: str, schema_def: Dict[str, str]) -> None:
@@ -105,7 +114,7 @@ def _create_table(engine: Engine, table_name: str, schema_def: Dict[str, str]) -
     sql = f"CREATE TABLE {table_name} ({cols_clause});"
     with engine.begin() as conn:
         conn.execute(text(sql))
-    print(f"[schema_manager] Created table '{table_name}'.")
+    logger.info("Created table", table=table_name)
 
 
 def _ensure_unique_index(engine: Engine, table_name: str, key_cols: list[str]) -> None:
@@ -175,7 +184,7 @@ def ensure_table_schema(engine: Engine, table_name: str, expected_schema: Dict[s
                 if "int" in col_type:
                     with engine.begin() as conn:
                         conn.execute(text(f"ALTER TABLE {table_name} ALTER COLUMN {col_name} TYPE TEXT USING {col_name}::text;"))
-                    print(f"[schema_manager] Altered column '{col_name}' in '{table_name}' to TEXT to store large IDs.")
+                    logger.info("Altered column to TEXT for large IDs", table=table_name, column=col_name)
 
     # Align date columns to DATE where expected
     if existing_cols_raw and expected_schema:
@@ -194,7 +203,7 @@ def ensure_table_schema(engine: Engine, table_name: str, expected_schema: Dict[s
                             f"ALTER TABLE {table_name} ALTER COLUMN {col_name} TYPE DATE USING NULLIF({col_name}, '')::date;"
                         )
                     )
-                print(f"[schema_manager] Altered column '{col_name}' in '{table_name}' to DATE to match schema.")
+                logger.info("Altered column to DATE to match schema", table=table_name, column=col_name)
 
     # Add inferred columns from df if not in expected_schema
     if df is not None:
@@ -219,9 +228,11 @@ def ensure_table_schema(engine: Engine, table_name: str, expected_schema: Dict[s
 
         items = list(inferred_candidates.items())
         if MAX_INFERRED_COLUMNS is not None and len(items) > MAX_INFERRED_COLUMNS:
-            print(
-                f"[schema_manager] INFO: inferred {len(items)} new columns for '{table_name}', "
-                f"limiting to first {MAX_INFERRED_COLUMNS} to avoid schema explosion."
+            logger.info(
+                "Limiting inferred columns to avoid schema explosion",
+                table=table_name,
+                inferred=len(items),
+                limit=MAX_INFERRED_COLUMNS,
             )
             items = items[:MAX_INFERRED_COLUMNS]
         for col, col_type in items:
@@ -246,14 +257,34 @@ def ensure_table_schema(engine: Engine, table_name: str, expected_schema: Dict[s
                             f"ALTER TABLE {table_name} ALTER COLUMN {col_name} TYPE NUMERIC USING NULLIF({col_name}, '')::numeric;"
                         )
                     )
-                print(
-                    f"[schema_manager] Altered column '{col_name}' in '{table_name}' to NUMERIC based on incoming data."
-                )
+                logger.info("Altered column to NUMERIC based on incoming data", table=table_name, column=col_name)
 
     for col, col_type in missing_columns.items():
         with engine.begin() as conn:
             conn.execute(text(f"ALTER TABLE {table_name} ADD COLUMN {col} {col_type};"))
-        print(f"[schema_manager] Added column '{col}' to '{table_name}' as {col_type}.")
+        logger.info("Added column", table=table_name, column=col, col_type=col_type)
+
+
+def ensure_views(engine: Engine) -> None:
+    try:
+        insp = inspect(engine)
+        all_fact_cols = {col["name"] for col in insp.get_columns("fact_meta_delivery_ad")}
+        extra = sorted(all_fact_cols - STATIC_FACT_COLUMNS)
+
+        existing_dim_cols = {
+            tbl: {col["name"] for col in insp.get_columns(tbl)}
+            for tbl in ("dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives")
+            if insp.has_table(tbl)
+        }
+
+        sql = postgres_view_sql(extra_fact_columns=extra, existing_dim_cols=existing_dim_cols)
+        with engine.begin() as conn:
+            conn.execute(text(f"DROP VIEW IF EXISTS {VIEW_NAME}"))
+            conn.execute(text(sql))
+        logger.info("Created/updated view", view=VIEW_NAME, dynamic_columns=len(extra))
+    except Exception as exc:
+        first_line = str(exc).splitlines()[0]
+        logger.warning("Could not create/update view", view=VIEW_NAME, error=first_line)
 
 
 def ensure_database_and_tables(conn_string: str, table_names: Optional[List[str]] = None, df: Optional[pd.DataFrame] = None) -> None:
@@ -271,3 +302,8 @@ def ensure_database_and_tables(conn_string: str, table_names: Optional[List[str]
         # Ensure unique index for ON CONFLICT support
         key_cols = UNIQUE_KEYS.get(table_name, [])
         _ensure_unique_index(engine, table_name, key_cols)
+
+    inspector = inspect(engine)
+    required = {"fact_meta_delivery_ad", "dim_meta_accounts", "dim_meta_ads", "dim_meta_creatives"}
+    if required.issubset(set(inspector.get_table_names())):
+        ensure_views(engine)

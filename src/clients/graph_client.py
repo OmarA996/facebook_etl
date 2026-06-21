@@ -107,7 +107,19 @@ class GraphAPIClient:
                 # On 429/5xx, retry with same params
                 continue
 
-            # For 4xx (other than 429) or exhausted retries: raise detailed error
+            # Meta returns HTTP 400 with code=2 for transient "service temporarily unavailable" errors.
+            # Despite is_transient=False in the body, the message says to retry — treat it as retriable.
+            if status == 400 and attempt < max_retries - 1:
+                try:
+                    err_body = resp.json().get("error", {})
+                    if err_body.get("code") == 2:
+                        sleep_for = base_backoff * (2**attempt) + random.uniform(0, 0.5)
+                        time.sleep(sleep_for)
+                        continue
+                except ValueError:
+                    pass
+
+            # For 4xx (other than handled above) or exhausted retries: raise detailed error
             try:
                 payload = resp.json()
             except ValueError:

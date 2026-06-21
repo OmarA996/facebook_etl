@@ -3,17 +3,86 @@
 from typing import List, Dict
 import json
 import pandas as pd
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, inspect
 from sqlalchemy.sql import text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 
 from src.config import load_postgres_config
 from src.etl.load.schema_manager import ensure_database_and_tables
 from src.utils.names import normalize_column_name
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 # Postgres hard limit is 65535 parameters per statement; stay well under this ceiling.
 # Keep a wide buffer because the ON CONFLICT UPDATE portion can add parameters.
 MAX_PARAMS_PER_STATEMENT = 20000
+
+
+def _quote_ident(name: str) -> str:
+    return '"' + str(name).replace('"', '""') + '"'
+
+
+def table_exists(table_name: str, conn_string: str | None = None) -> bool:
+    if not conn_string:
+        try:
+            conn_string = load_postgres_config().conn_string
+        except Exception as e:
+            logger.error("No DB connection available", error=str(e))
+            return False
+
+    engine = create_engine(conn_string)
+    return inspect(engine).has_table(table_name)
+
+
+def relation_exists(name: str, conn_string: str | None = None) -> bool:
+    """Returns True if a table or view with the given name exists in the public schema."""
+    if not conn_string:
+        try:
+            conn_string = load_postgres_config().conn_string
+        except Exception as e:
+            logger.error("No DB connection available", error=str(e))
+            return False
+
+    engine = create_engine(conn_string)
+    insp = inspect(engine)
+    return insp.has_table(name) or name in insp.get_view_names(schema="public")
+
+
+def list_tables(conn_string: str | None = None) -> list[str]:
+    if not conn_string:
+        try:
+            conn_string = load_postgres_config().conn_string
+        except Exception as e:
+            logger.error("No DB connection available", error=str(e))
+            return []
+
+    engine = create_engine(conn_string)
+    inspector = inspect(engine)
+    return sorted(inspector.get_table_names(schema="public"))
+
+
+def iterate_table_chunks(
+    table_name: str,
+    *,
+    chunk_size: int = 50000,
+    conn_string: str | None = None,
+):
+    if not conn_string:
+        try:
+            conn_string = load_postgres_config().conn_string
+        except Exception as e:
+            logger.error("No DB connection available", error=str(e))
+            return
+
+    if chunk_size < 1:
+        raise ValueError("chunk_size must be >= 1")
+
+    engine = create_engine(conn_string)
+    quoted_table = _quote_ident(table_name)
+    query = text(f"SELECT * FROM {quoted_table}")
+    with engine.connect() as conn:
+        yield from pd.read_sql_query(query, conn, chunksize=chunk_size)
 
 
 def save_df_to_postgres_upsert(
@@ -28,14 +97,14 @@ def save_df_to_postgres_upsert(
     unique_cols: columns that define a unique row, e.g. ["ad_id", "date_start"].
     """
     if df.empty:
-        print(f"[postgres_loader] DataFrame is empty; nothing to upsert into {table_name}.")
+        logger.info("DataFrame is empty, nothing to upsert", table=table_name)
         return
 
     if not conn_string:
         try:
             conn_string = load_postgres_config().conn_string
         except Exception as e:
-            print(f"[postgres_loader] No DB connection available: {e}")
+            logger.error("No DB connection available", error=str(e))
             return
 
     # Normalize column names for Postgres limit and drop duplicates after normalization
@@ -74,7 +143,7 @@ def save_df_to_postgres_upsert(
         dup_mask = df.duplicated(subset=unique_cols, keep="last")
         dup_count = int(dup_mask.sum())
         if dup_count:
-            print(f"[postgres_loader] Dropping {dup_count} duplicate rows on unique key {unique_cols} before upsert.")
+            logger.info("Dropping duplicate rows before upsert", count=dup_count, unique_key=unique_cols)
             df = df.loc[~dup_mask]
 
     # Collapse duplicate normalized column names by taking the first non-null across duplicates
@@ -93,7 +162,7 @@ def save_df_to_postgres_upsert(
     try:
         ensure_database_and_tables(conn_string, [table_name], df=df)
     except Exception as e:
-        print(f"[postgres_loader] Failed to ensure schema for '{table_name}': {e}")
+        logger.error("Failed to ensure schema", table=table_name, error=str(e))
         return
 
     # Create DB engine
@@ -110,7 +179,7 @@ def save_df_to_postgres_upsert(
     df_cols = list(df.columns)
     dropped = [c for c in df_cols if c not in table_cols]
     if dropped:
-        print(f"[postgres_loader] WARNING: dropping columns not in '{table_name}': {dropped}")
+        logger.warning("Dropping columns not in table", table=table_name, columns=dropped)
     # IMPORTANT: keep only columns that exist in the table
     df = df[[c for c in df_cols if c in table_cols]]
 
@@ -120,7 +189,7 @@ def save_df_to_postgres_upsert(
     # Batch the upsert to respect Postgres parameter limits
     col_count = len(df.columns)
     if col_count == 0:
-        print(f"[postgres_loader] No columns to upsert for '{table_name}'.")
+        logger.warning("No columns to upsert", table=table_name)
         return
     # Each row contributes roughly `col_count` parameters for VALUES. Apply a 2x safety
     # multiplier to account for the UPDATE clause and stay well under Postgres limits.
@@ -145,7 +214,7 @@ def save_df_to_postgres_upsert(
             conn.execute(upsert_stmt)
             upserted += len(batch)
 
-    print(f"[postgres_loader] Upserted {upserted} rows into '{table_name}'.")
+    logger.info("Upsert complete", table=table_name, rows=upserted)
 
 
 def truncate_all_tables(table_names: List[str], conn_string: str | None = None) -> None:
@@ -156,18 +225,18 @@ def truncate_all_tables(table_names: List[str], conn_string: str | None = None) 
         try:
             conn_string = load_postgres_config().conn_string
         except Exception as e:
-            print(f"[postgres_loader] No DB connection available: {e}")
+            logger.error("No DB connection available", error=str(e))
             return
 
     if not table_names:
-        print("[postgres_loader] No tables provided to truncate.")
+        logger.warning("No tables provided to truncate")
         return
 
     engine = create_engine(conn_string)
     with engine.begin() as conn:
         tables_str = ", ".join(table_names)
         conn.execute(text(f"TRUNCATE {tables_str} RESTART IDENTITY CASCADE;"))
-    print(f"[postgres_loader] Truncated tables: {table_names}")
+    logger.info("Truncated tables", tables=table_names)
 
 
 def insert_raw_insights(
@@ -186,14 +255,14 @@ def insert_raw_insights(
         try:
             conn_string = load_postgres_config().conn_string
         except Exception as e:
-            print(f"[postgres_loader] No DB connection available: {e}")
+            logger.error("No DB connection available", error=str(e))
             return
 
     # Ensure raw table exists
     try:
         ensure_database_and_tables(conn_string, ["meta_insights_raw"], df=None)
     except Exception as e:
-        print(f"[postgres_loader] Failed to ensure schema for 'meta_insights_raw': {e}")
+        logger.error("Failed to ensure schema", table="meta_insights_raw", error=str(e))
         return
 
     rows = []
@@ -226,7 +295,7 @@ def insert_raw_insights(
             ),
             rows,
         )
-    print(f"[postgres_loader] Inserted {len(rows)} raw insight rows into 'meta_insights_raw'.")
+    logger.info("Inserted raw insight rows", table="meta_insights_raw", rows=len(rows))
 
 
 def insert_raw_records(
@@ -247,13 +316,13 @@ def insert_raw_records(
         try:
             conn_string = load_postgres_config().conn_string
         except Exception as e:
-            print(f"[postgres_loader] No DB connection available: {e}")
+            logger.error("No DB connection available", error=str(e))
             return
 
     try:
         ensure_database_and_tables(conn_string, [table_name], df=None)
     except Exception as e:
-        print(f"[postgres_loader] Failed to ensure schema for '{table_name}': {e}")
+        logger.error("Failed to ensure schema", table=table_name, error=str(e))
         return
 
     rows = []
@@ -271,4 +340,4 @@ def insert_raw_records(
     engine = create_engine(conn_string)
     with engine.begin() as conn:
         conn.execute(text(sql), rows)
-    print(f"[postgres_loader] Inserted {len(rows)} raw rows into '{table_name}'.")
+    logger.info("Inserted raw rows", table=table_name, rows=len(rows))

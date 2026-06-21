@@ -6,6 +6,9 @@ from typing import Any, Dict, List, Optional
 from src.clients.graph_client import GraphAPIClient, GraphAPIError
 from src.config import load_ad_account_ids, load_graph_config
 from src.fields.endpoints import ENDPOINT_FIELDS
+from src.utils.logger import get_logger
+
+_logger = get_logger(__name__)
 
 graph_cfg = load_graph_config()
 client = GraphAPIClient(
@@ -57,7 +60,7 @@ def fetch_insights(
 
     account_ids = ad_account_ids or load_ad_account_ids()
     if not account_ids:
-        raise ValueError("META_AD_ACCOUNT_IDS is empty; provide at least one account id.")
+        raise ValueError("No included account ids were found. Add accounts to the registry and set include_in_etl=True.")
 
     fields = get_insights_fields(level)
     all_records: List[Dict[str, Any]] = []
@@ -93,12 +96,15 @@ def fetch_insights(
                 account_id = futures[fut]
                 try:
                     page_rows = fut.result()
+                    all_records.extend(page_rows)
                 except Exception as e:
-                    raise GraphAPIError(f"Insights fetch failed for {account_id}: {e}") from e
-                all_records.extend(page_rows)
+                    _logger.error("Skipping account due to error", account_id=account_id, error=str(e))
     else:
         for account_id in account_ids:
-            page_rows = _fetch_for_account(account_id)
-            all_records.extend(page_rows)
+            try:
+                page_rows = _fetch_for_account(account_id)
+                all_records.extend(page_rows)
+            except GraphAPIError as e:
+                _logger.error("Skipping account due to error", account_id=account_id, error=str(e))
 
     return all_records

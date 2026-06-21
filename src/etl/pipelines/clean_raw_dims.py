@@ -6,6 +6,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 
 from src.config import PostgresConfig
+from src.utils.logger import get_logger
 from src.etl.transform.core import (
     flatten_json,
     fill_numeric_keep_nulls,
@@ -14,6 +15,8 @@ from src.etl.transform.core import (
 )
 from src.etl.load.postgres_loader import save_df_to_postgres_upsert
 from src.schema.unique_keys import UNIQUE_KEYS
+
+logger = get_logger(__name__)
 
 
 @dataclass
@@ -27,7 +30,7 @@ RAW_CLEAN_CONFIGS: Dict[str, RawCleanConfig] = {
     "creatives": RawCleanConfig("meta_creatives_raw", "dim_meta_creatives"),
     "campaigns": RawCleanConfig("meta_campaigns_raw", "dim_meta_campaigns"),
     "adsets": RawCleanConfig("meta_adsets_raw", "dim_meta_adsets"),
-    "ads": RawCleanConfig("meta_ads_raw", "dim_meta_ads_settings"),
+    "ads": RawCleanConfig("meta_ads_raw", "dim_meta_ads"),
     "ad-previews": RawCleanConfig("meta_ads_previews_raw", "dim_meta_ads"),
 }
 
@@ -84,7 +87,7 @@ def run_clean_dim_from_raw(
         rows = conn.execute(text(sql), params).fetchall()
 
     if not rows:
-        print(f"[clean-{entity}] No raw rows found in {cfg.raw_table}.")
+        logger.warning("No raw rows found", entity=entity, raw_table=cfg.raw_table)
         return None
 
     records = []
@@ -100,7 +103,7 @@ def run_clean_dim_from_raw(
         records.append(payload)
 
     if not records:
-        print(f"[clean-{entity}] No payloads decoded from {cfg.raw_table}.")
+        logger.warning("No payloads decoded", entity=entity, raw_table=cfg.raw_table)
         return None
 
     df = flatten_json(records)
@@ -116,17 +119,17 @@ def run_clean_dim_from_raw(
         df[col] = df[col].apply(lambda x: None if pd.isna(x) else str(x))
     df = fill_numeric_keep_nulls(df)
     df = df.drop_duplicates()
-    print(f"[clean-{entity}] Normalized rows: {len(df)}; shape={df.shape}")
+    logger.info("Normalized rows", entity=entity, rows=len(df), shape=df.shape)
 
     if not to_db:
-        print(f"[clean-{entity}] --no-db specified; returning DataFrame without upsert.")
+        logger.info("--no-db specified, returning DataFrame without upsert", entity=entity)
         return df
 
     unique_cols = UNIQUE_KEYS.get(cfg.target_table)
     if unique_cols is None:
         raise ValueError(f"No UNIQUE_KEYS defined for table '{cfg.target_table}'")
 
-    print(f"[clean-{entity}] Upserting into '{cfg.target_table}' with unique_cols={unique_cols}...")
+    logger.info("Upserting into target table", entity=entity, table=cfg.target_table, unique_cols=unique_cols)
     save_df_to_postgres_upsert(
         df,
         cfg.target_table,
